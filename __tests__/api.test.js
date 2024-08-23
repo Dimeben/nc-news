@@ -54,4 +54,12 @@ describe("/api", () => {
         );
       });
   });
+  test("404 - GET - sends an appropriate status and error message when an invalid URL is passed", () => {
+    return request(app)
+      .get("/ap")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
 });
