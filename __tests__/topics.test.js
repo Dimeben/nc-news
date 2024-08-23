@@ -17,7 +17,7 @@ afterAll(() => {
   return db.end();
 });
 
-describe("CORE: GET /api/topics", () => {
+describe("/api/topics", () => {
   test("200 - GET - will return all topics in an array of objects, with the properties of slug & description ", () => {
     return request(app)
       .get("/api/topics")
