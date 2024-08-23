@@ -7,8 +7,11 @@ const {
   postErrorHandler,
 } = require("./error-handlers");
 const { getTopics } = require("./controllers/topics-controller");
+const { getApis } = require("./controllers/api-controller");
 
 app.get("/api/topics", getTopics);
+
+app.get("/api", getApis);
 
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Page not found" });
