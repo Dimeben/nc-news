@@ -1,6 +1,7 @@
 const {
   selectArticles,
   selectAllArticles,
+  updateArticleVotes,
 } = require("../models/articles-model");
 
 exports.getArticles = (req, res, next) => {
@@ -9,7 +10,9 @@ exports.getArticles = (req, res, next) => {
     .then((article) => {
       res.status(200).send({ article });
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.getAllArticles = (req, res, next) => {
@@ -17,5 +20,19 @@ exports.getAllArticles = (req, res, next) => {
     .then((articles) => {
       res.status(200).send({ articles });
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.patchArticleVotes = (req, res, next) => {
+  const articleId = Number(req.params.article_id);
+  const votes = req.body.inc_votes;
+  updateArticleVotes(articleId, votes)
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };

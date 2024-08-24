@@ -51,6 +51,84 @@ describe("/api/articles/:article_id", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
+  test("200 - PATCH - will return an updated article object, using a newVotes object (adding votes)", () => {
+    const newVotes = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then((res) => {
+        const article = res.body.article;
+        expect(article).toHaveProperty("article_id", expect.any(Number));
+        expect(article).toHaveProperty("title", expect.any(String));
+        expect(article).toHaveProperty("topic", expect.any(String));
+        expect(article).toHaveProperty("author", expect.any(String));
+        expect(article).toHaveProperty("body", expect.any(String));
+        expect(article).toHaveProperty("created_at", expect.any(String));
+        expect(article).toHaveProperty("votes", expect.any(Number));
+        expect(article).toHaveProperty("article_img_url", expect.any(String));
+        expect(article.votes).toBe(110);
+      });
+  });
+  test("200 - PATCH - will return an updated article object, using a newVotes object (subtracting votes)", () => {
+    const newVotes = { inc_votes: -40 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(200)
+      .then((res) => {
+        const article = res.body.article;
+        expect(article).toHaveProperty("article_id", expect.any(Number));
+        expect(article).toHaveProperty("title", expect.any(String));
+        expect(article).toHaveProperty("topic", expect.any(String));
+        expect(article).toHaveProperty("author", expect.any(String));
+        expect(article).toHaveProperty("body", expect.any(String));
+        expect(article).toHaveProperty("created_at", expect.any(String));
+        expect(article).toHaveProperty("votes", expect.any(Number));
+        expect(article).toHaveProperty("article_img_url", expect.any(String));
+        expect(article.votes).toBe(60);
+      });
+  });
+  test("404 - PATCH - sends an appropriate status and error message when a non-exist article_id is used", () => {
+    const newVotes = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/99")
+      .send(newVotes)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+  test("400 - PATCH - sends an appropriate status and error message when an invalid datatype is posted", () => {
+    const newVotes = { inc_votes: "41111" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 - PATCH - sends an appropriate status and error message when an invalid article_id is passed", () => {
+    const newVotes = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/im-an-id")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 - PATCH - sends an appropriate status and error message when an invalid votes object is posted", () => {
+    const newVotes = { inc_votes: "give me votes", even_more_votes: "hello" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
 });
 
 describe("/api/articles", () => {

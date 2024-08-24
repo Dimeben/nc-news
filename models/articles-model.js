@@ -32,3 +32,24 @@ exports.selectAllArticles = () => {
       return articles;
     });
 };
+
+exports.updateArticleVotes = (articleId, votes) => {
+  if (typeof articleId !== "number" || typeof votes !== "number") {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  return exports
+    .selectArticles(articleId)
+    .then(() => {
+      return db.query(
+        `UPDATE articles SET votes = votes+$1 WHERE article_id = $2 RETURNING *`,
+        [votes, articleId]
+      );
+    })
+    .then((result) => {
+      const article = result.rows[0];
+      if (!article) {
+        return Promise.reject({ status: 404, msg: "Page not found" });
+      }
+      return article;
+    });
+};

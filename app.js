@@ -12,6 +12,7 @@ const { getApis } = require("./controllers/api-controller");
 const {
   getArticles,
   getAllArticles,
+  patchArticleVotes,
 } = require("./controllers/articles-controller");
 const {
   getComments,
@@ -26,6 +27,7 @@ app.get("/api/articles/:article_id", getArticles);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", postComments);
+app.patch("/api/articles/:article_id", patchArticleVotes);
 
 // Error Handlers
 app.all("/*", (req, res) => {
