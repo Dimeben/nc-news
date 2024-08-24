@@ -1,4 +1,8 @@
-const { selectComments, createComments } = require("../models/comments-model");
+const {
+  selectComments,
+  createComments,
+  removeComment,
+} = require("../models/comments-model");
 
 exports.getComments = (req, res, next) => {
   const articleId = req.params.article_id;
@@ -6,7 +10,9 @@ exports.getComments = (req, res, next) => {
     .then((comments) => {
       res.status(200).send({ comments });
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
 };
 
 exports.postComments = (req, res, next) => {
@@ -16,5 +22,18 @@ exports.postComments = (req, res, next) => {
     .then((comment) => {
       res.status(201).send({ comment });
     })
-    .catch(next);
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteComment = (req, res, next) => {
+  const commentId = req.params.comment_id;
+  removeComment(commentId)
+    .then(() => {
+      res.status(204).send({ msg: "Comment deleted" });
+    })
+    .catch((err) => {
+      next(err);
+    });
 };
