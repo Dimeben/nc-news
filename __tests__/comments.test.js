@@ -94,14 +94,14 @@ describe("/api/articles/:article_id/comments", () => {
       body: 123897,
     };
     return request(app)
-      .post("/api/articles/im-an-id/comments")
+      .post("/api/articles/1/comments")
       .send(newComment)
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("400 - POST - sends an appropriate status and error message when an invalid comment property is posted", () => {
+  test("400 - POST - sends an appropriate status and error message when an invalid article_id is passed", () => {
     const newComment = {
       name: "rogersop",
       comment: "What an interesting read!",
@@ -121,20 +121,7 @@ describe("/api/articles/:article_id/comments", () => {
       votes: 10000000000000,
     };
     return request(app)
-      .post("/api/articles/im-an-id/comments")
-      .send(newComment)
-      .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
-      });
-  });
-  test("400 - POST - sends an appropriate status and error message when an invalid article_id is used", () => {
-    const newComment = {
-      username: "rogersop",
-      body: "What an interesting read!",
-    };
-    return request(app)
-      .post("/api/articles/im-an-id/comments")
+      .post("/api/articles/1/comments")
       .send(newComment)
       .expect(400)
       .then((res) => {
