@@ -1,15 +1,38 @@
-# Northcoders News API
+<h1>Northcoders News API</h1>
 
+<h2>Skills</h2>
+
+<h3>
+<strong> > JavaScript </strong><br>
+<strong> > Express </strong><br>
+<strong> > Jest </strong><br>
+<strong> > SuperTest </strong><br>
+<strong> > Postgres </strong><br>
+<strong> > PSQL </strong><br>
+<strong> > TDD </strong><br>
+<strong> > FS/Promises </strong><br>
+<strong> > Middleware </strong><br>
+<strong> > Error-Handling </strong><br>
+<strong> > Environment Variables </strong><br>
+<strong> > Model View Controller </strong><br>
+</h3>
+
+<h2>Setup</h2>
+
+<h3>
 To begin, create 2 .env files:
+</h3>
 
 .env.test
 .env.development
 
+<h3>
 In .env.test, write:
-
+</h3>
 PGDATABASE=nc_news_test
 
-In .env.development, write:
+<h3>In .env.development, write:
+</h3>
 
 PGDATABASE=nc_news_test
 
@@ -17,51 +40,51 @@ Double check that these .env files are .gitignored.
 
 Run npm install
 
-# Endpoints
+<h2>Endpoints</h2>
 
-GET /api/topics
+<h4>GET /api/topics</h4>
 
-responds with a list of topics
+> responds with a list of topics
 
-GET /api
+<h4>GET /api</h4>
 
-responds with a list of available endpoints
+> responds with a list of available endpoints
 
-GET /api/articles/:article_id
+<h4>GET /api/articles/:article_id</h4>
 
-responds with a single article by article_id
+> responds with a single article by article_id
 
-GET /api/articles
+<h4>GET /api/articles</h4>
 
-responds with a list of articles
+> responds with a list of articles
 
-GET /api/articles/:article_id/comments
+<h4>GET /api/articles/:article_id/comments</h4>
 
-responds with a list of comments by article_id
+> responds with a list of comments by article_id
 
-POST /api/articles/:article_id/comments
+<h4>POST /api/articles/:article_id/comments</h4>
 
-add a comment by article_id
+> add a comment by article_id
 
-PATCH /api/articles/:article_id
+<h4>PATCH /api/articles/:article_id</h4>
 
-updates an article by article_id
+> updates an article by article_id
 
-DELETE /api/comments/:comment_id
+<h4>DELETE /api/comments/:comment_id</h4>
 
-deletes a comment by comment_id
+> deletes a comment by comment_id
 
-GET /api/users
+<h4>GET /api/users</h4>
 
-responds with a list of users
+> responds with a list of users
 
-GET /api/articles (queries)
+<h4>GET /api/articles (queries)</h4>
 
-allows articles to be filtered and sorted
+> allows articles to be filtered and sorted
 
-GET /api/articles/:article_id (comment count)
+<h4>GET /api/articles/:article_id (comment count)</h4>
 
-adds a comment count to the response when retrieving a single article
+> adds a comment count to the response when retrieving a single article
 
 ---
 
