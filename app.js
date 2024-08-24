@@ -11,7 +11,10 @@ const { getApis } = require("./controllers/api-controller");
 const {
   getArticles,
   getAllArticles,
+  getComments,
 } = require("./controllers/articles-controller");
+
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
@@ -19,9 +22,9 @@ app.get("/api", getApis);
 
 app.get("/api/articles/:article_id", getArticles);
 
-app.use(express.json());
-
 app.get("/api/articles", getAllArticles);
+
+app.get("/api/articles/:article_id/comments", getComments);
 
 //Error Handlers:
 
