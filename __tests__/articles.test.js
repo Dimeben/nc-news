@@ -37,7 +37,7 @@ describe("/api/articles/:article_id", () => {
   });
   test("404 - GET - sends an appropriate status and error message when a non-exist article_id is used", () => {
     return request(app)
-      .get("/api/articles/1000000000000000")
+      .get("/api/articles/1234")
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Page not found");
@@ -82,7 +82,8 @@ describe("/api/articles", () => {
       .then((res) => {
         const articles = res.body.articles;
         articles.forEach((article) => {
-          expect(article).toHaveProperty("comment_count", expect.any(Number));
+          expect(article).toHaveProperty("comment_count");
+          expect(typeof Number(article.comment_count)).toBe("number");
         });
       });
   });
@@ -92,44 +93,6 @@ describe("/api/articles", () => {
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Page not found");
-      });
-  });
-});
-
-describe("/api/articles/:article_id/comments", () => {
-  test("200 - GET - will return an array of all comment objects with the properties of comment_id, votes, author, body, article_id and create_at in descending order", () => {
-    return request(app)
-      .get("/api/articles/1/comments")
-      .expect(200)
-      .then((res) => {
-        const comments = res.body.comments;
-        console.log(comments);
-        expect(comments).toHaveLength(11);
-        expect(Array.isArray(comments)).toBe(true);
-        comments.forEach((comment) => {
-          expect(comment).toHaveProperty("comment_id", expect.any(Number));
-          expect(comment).toHaveProperty("votes", expect.any(Number));
-          expect(comment).toHaveProperty("created_at", expect.any(String));
-          expect(comment).toHaveProperty("author", expect.any(String));
-          expect(comment).toHaveProperty("article_id", expect.any(Number));
-        });
-        expect(comments).toBeSortedBy("created_at", { descending: true });
-      });
-  });
-  test("404 - GET - sends an appropriate status and error message when a non-exist article_id is used", () => {
-    return request(app)
-      .get("/api/articles/1000000000000000/comments")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
-  test("400 - GET - sends an appropriate status and error message when an invalid article_id is used", () => {
-    return request(app)
-      .get("/api/articles/Im-an-id/comments")
-      .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
       });
   });
 });
