@@ -97,5 +97,18 @@
     "description": "deletes a comment based on the comment_id",
     "queries": [],
     "exampleResponse": { "msg": "Comment deleted" }
+  },
+  "POST GET /api/users": {
+    "description": "serves an array of all users object",
+    "queries": [],
+    "exampleResponse": {
+      "/user": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
   }
 }

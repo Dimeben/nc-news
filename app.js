@@ -19,6 +19,7 @@ const {
   postComments,
   deleteComment,
 } = require("./controllers/comments-controller");
+const { getUsers } = require("./controllers/users-controller");
 
 app.use(express.json());
 
@@ -29,7 +30,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getComments);
 app.post("/api/articles/:article_id/comments", postComments);
 app.patch("/api/articles/:article_id", patchArticleVotes);
-app.delete("/api/comments/:comment_id", deleteComment)
+app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api/users", getUsers);
 
 // Error Handlers
 app.all("/*", (req, res) => {
