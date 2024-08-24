@@ -1,16 +1,17 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (article_id) => {
-  if (!Number(article_id)) {
+exports.selectArticles = (articleId) => {
+  if (!Number(articleId)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
   return db
-    .query(`SELECT * FROM articles WHERE article_id=${article_id}`)
+    .query(`SELECT * FROM articles WHERE article_id=${articleId}`)
     .then((article) => {
-      if (article.rows.length === 0) {
+      const articlesArray = article.rows;
+      if (articlesArray.length === 0) {
         return Promise.reject({ status: 404, msg: "Page not found" });
       }
-      return article.rows[0];
+      return articlesArray[0];
     });
 };
 
@@ -32,5 +33,22 @@ exports.selectAllArticles = () => {
         articlesArray[i].comment_count = Number(articlesArray[i].comment_count);
       }
       return articlesArray;
+    });
+};
+
+exports.selectComments = (articleId) => {
+  if (!Number(articleId)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  return db
+    .query(
+      `SELECT * FROM comments WHERE article_id=${articleId} ORDER BY created_at DESC`
+    )
+    .then((comments) => {
+      const commentsArray = comments.rows;
+      if (commentsArray.length === 0) {
+        return Promise.reject({ status: 404, msg: "Page not found" });
+      }
+      return commentsArray;
     });
 };
