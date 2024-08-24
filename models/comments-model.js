@@ -45,3 +45,19 @@ exports.createComments = (articleId, { username, body }) => {
       return comment;
     });
 };
+
+exports.removeComment = (commentId) => {
+  if (!Number.isInteger(Number(commentId))) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  return exports
+    .selectComments(commentId)
+    .then(() => {
+      return db.query(`DELETE FROM comments WHERE comment_id = $1`, [
+        commentId,
+      ]);
+    })
+    .then(() => {
+      return;
+    });
+};

@@ -129,3 +129,30 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  test("204 - DELETE - sends an appropriate status code and message when a comment is deleted", () => {
+    return request(app)
+      .delete("/api/comments/3")
+      .expect(204)
+      .then((res) => {
+        expect(res.statusCode).toBe(204);
+      });
+  });
+  test("400 - DELETE - sends an appropriate status and error message when an invalid comment_id is passed", () => {
+    return request(app)
+      .delete("/api/comments/im-a-comment")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("404 - DELETE - sends an appropriate status and error message when a non-existent comment_id is used", () => {
+    return request(app)
+      .delete("/api/comments/3123")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+});

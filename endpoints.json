@@ -74,5 +74,28 @@
         }
       ]
     }
+  },
+  "PATCH /api/articles/:article_id/": {
+    "description": "updates an articles votes based on the number of votes provided in the input object",
+    "queries": [],
+    "exampleInput": { "inc_votes": 10 },
+    "exampleResponse": {
+      "articles/1/": [
+        {
+          "article_id": 1,
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "author": "butter_bridge",
+          "body": "I find this existence challenging",
+          "create_at": 1904113380000,
+          "votes": 60
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment based on the comment_id",
+    "queries": [],
+    "exampleResponse": { "msg": "Comment deleted" }
   }
 }
