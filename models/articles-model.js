@@ -16,34 +16,26 @@ exports.selectArticles = (articleId) => {
     });
 };
 
-exports.selectAllArticles = (sortBy, order) => {
-  let baseQuery = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COALESCE(COUNT(comments.article_id), 0) AS comment_count
-  FROM articles
-  LEFT JOIN comments ON articles.article_id = comments.article_id
-  GROUP BY articles.article_id`;
+exports.selectAllArticles = (
+  sortBy = "created_at",
+  order = "DESC",
+  topic = "all"
+) => {
+  let baseQuery = `
+    SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
+    COALESCE(COUNT(comments.article_id), 0) AS comment_count
+    FROM articles
+    LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
-  const validSortBy = [
-    "author",
-    "title",
-    "article_id",
-    "topic",
-    "created_at",
-    "votes",
-    "comment_count",
-  ];
-  const validOrder = ["ASC", "DESC"];
-
-  if (!validSortBy.includes(sortBy)) {
-    sortBy = "created_at";
+  const queryParams = [];
+  if (topic !== "all") {
+    baseQuery += ` WHERE articles.topic = $1`;
+    queryParams.push(topic);
   }
 
-  if (!validOrder.includes(order)) {
-    order = "DESC";
-  }
+  baseQuery += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order}`;
 
-  baseQuery += ` ORDER BY articles.${sortBy} ${order}`;
-
-  return db.query(baseQuery).then((result) => {
+  return db.query(baseQuery, queryParams).then((result) => {
     return result.rows;
   });
 };
