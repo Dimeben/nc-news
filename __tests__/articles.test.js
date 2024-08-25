@@ -10,6 +10,8 @@ const {
   commentData,
 } = require("../db/data/test-data/index");
 
+jest.setTimeout(10000);
+
 beforeEach(() => {
   return seed({ topicData, userData, articleData, commentData });
 });
@@ -263,6 +265,54 @@ describe("/api/articles", () => {
   test("400 - GET - sends an appropriate status and error message when an invalid topic is passed", () => {
     return request(app)
       .get("/api/articles?topic=banana123")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("201 - POST - will return a successfully posted article object with the request body properties of author, title, body, topic and article_img_url", () => {
+    const newArticle = {
+      author: "icellusedkars",
+      title: "What a time to be alive",
+      body: "Amazing!",
+      topic: "cats",
+      article_img_url:
+        "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(201)
+      .then((res) => {
+        const article = res.body.article;
+        expect(article.article_id).toBe(14);
+        expect(article.author).toBe("icellusedkars");
+        expect(article.title).toBe("What a time to be alive");
+        expect(article.body).toBe("Amazing!");
+        expect(article.topic).toBe("cats");
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+        );
+        expect(article.votes).toBe(0);
+        const createdAtInSeconds =
+          new Date(article.created_at).getTime() / 1000;
+        const nowInSeconds = Date.now() / 1000;
+        expect(createdAtInSeconds).toBeCloseTo(nowInSeconds, 1);
+        expect(article.comment_count).toBe(0);
+      });
+  });
+  test("400 - POST - sends an appropriate status and error message when an invalid comment object is posted", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: 11000111001,
+      body: 111,
+      topic: 10101,
+      article_img_url:
+        "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");

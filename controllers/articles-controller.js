@@ -3,6 +3,7 @@ const {
   selectArticles,
   selectAllArticles,
   updateArticleVotes,
+  createArticle,
 } = require("../models/articles-model");
 
 const validSortBy = [
@@ -16,6 +17,8 @@ const validSortBy = [
 ];
 const validOrder = ["ASC", "DESC"];
 const validTopic = ["mitch", "cats", "paper", "all"];
+const isValidString = (value) =>
+  typeof value === "string" && value.trim().length > 0;
 
 exports.getArticles = (req, res, next) => {
   const articleId = req.params.article_id;
@@ -65,6 +68,29 @@ exports.patchArticleVotes = (req, res, next) => {
   updateArticleVotes(articleId, votes)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.postArticle = (req, res, next) => {
+  const { author, title, body, topic, article_img_url } = req.body;
+
+  if (
+    !isValidString(author) ||
+    !isValidString(title) ||
+    !isValidString(body) ||
+    !isValidString(topic) ||
+    !isValidString(article_img_url)
+  ) {
+    return next({ status: 400, msg: "Bad request" });
+  }
+
+  createArticle(author, title, body, topic, article_img_url)
+    .then((article) => {
+      article.comment_count = Number(article.comment_count);
+      res.status(201).send({ article });
     })
     .catch((err) => {
       next(err);
