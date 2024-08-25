@@ -28,7 +28,9 @@ exports.selectArticles = (articleId) => {
 exports.selectAllArticles = (
   sortBy = "created_at",
   order = "DESC",
-  topic = "all"
+  topic = "all",
+  limit = 10,
+  page = 1
 ) => {
   let baseQuery = `
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
@@ -42,10 +44,23 @@ exports.selectAllArticles = (
     queryParams.push(topic);
   }
 
-  baseQuery += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order}`;
+  const offset = (page - 1) * limit;
+  console.log(queryParams);
 
-  return db.query(baseQuery, queryParams).then((result) => {
-    return result.rows;
+  baseQuery += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order} LIMIT $${
+    queryParams.length + 1
+  } OFFSET $${queryParams.length + 2}`;
+
+  return db.query(baseQuery, [...queryParams, limit, offset]).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Page not found" });
+    }
+    return db
+      .query(`SELECT COUNT(*) AS total_count FROM articles`)
+      .then((countResult) => {
+        const total_count = parseInt(countResult.rows[0].total_count, 10);
+        return { articles: result.rows, total_count };
+      });
   });
 };
 

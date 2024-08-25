@@ -157,7 +157,7 @@ describe("/api/articles", () => {
       .expect(200)
       .then((res) => {
         const articles = res.body.articles;
-        expect(articles).toHaveLength(13);
+        expect(articles).toHaveLength(10);
         expect(Array.isArray(articles)).toBe(true);
         articles.forEach((article) => {
           expect(article).toHaveProperty("article_id", expect.any(Number));
@@ -233,7 +233,7 @@ describe("/api/articles", () => {
       .expect(200)
       .then((res) => {
         const articles = res.body.articles;
-        expect(articles).toHaveLength(13);
+        expect(articles).toHaveLength(10);
         expect(Array.isArray(articles)).toBe(true);
         articles.forEach((article) => {
           expect(article).toHaveProperty("article_id", expect.any(Number));
@@ -255,7 +255,7 @@ describe("/api/articles", () => {
       .expect(200)
       .then((res) => {
         const articles = res.body.articles;
-        expect(articles).toHaveLength(12);
+        expect(articles).toHaveLength(10);
         expect(Array.isArray(articles)).toBe(true);
         articles.forEach((article) => {
           expect(article.topic).toBe("mitch");
@@ -268,6 +268,93 @@ describe("/api/articles", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("200 - GET - will return an array of 10 article objects when the limit query is used without a value. A total_count property will show how many articles are available in total", () => {
+    return request(app)
+      .get("/api/articles?limit=")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.articles).toHaveLength(10);
+        expect(response.total_count).toBe(13);
+      });
+  });
+  test("200 - GET - will return an array of 5 article objects when the limit query is used without a value of 5. A total_count property will show how many articles are available in total", () => {
+    return request(app)
+      .get("/api/articles?limit=5")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.articles).toHaveLength(5);
+        expect(response.total_count).toBe(13);
+      });
+  });
+  test("200 - GET - (1/3) - will return an array of 5 article objects, from objects 1 - 5 when p=1 is used. A total_count property will show how many articles are available in total", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=1")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.articles).toHaveLength(5);
+        expect(response.articles[0].article_id).toBe(3);
+        expect(response.articles[1].article_id).toBe(6);
+        expect(response.articles[2].article_id).toBe(2);
+        expect(response.articles[3].article_id).toBe(13);
+        expect(response.articles[4].article_id).toBe(12);
+        expect(response.total_count).toBe(13);
+      });
+  });
+  test("200 - GET - (2/3) - will return an array of 5 article objects, from objects 6 - 10 when p=2 is used. A total_count property will show how many articles are available in total", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=2")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.articles).toHaveLength(5);
+        expect(response.articles[0].article_id).toBe(5);
+        expect(response.articles[1].article_id).toBe(1);
+        expect(response.articles[2].article_id).toBe(9);
+        expect(response.articles[3].article_id).toBe(10);
+        expect(response.articles[4].article_id).toBe(4);
+        expect(response.total_count).toBe(13);
+      });
+  });
+  test("200 - GET - (3/3) - will return an array of 3 article objects, from objects 11 - 13 when p=3 is used. A total_count property will show how many articles are available in total", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=3")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.articles).toHaveLength(3);
+        expect(response.articles[0].article_id).toBe(8);
+        expect(response.articles[1].article_id).toBe(11);
+        expect(response.articles[2].article_id).toBe(7);
+        expect(response.total_count).toBe(13);
+      });
+  });
+  test("400 - GET - sends an appropriate status and error message when an invalid limit is passed", () => {
+    return request(app)
+      .get("/api/articles?limit=ABC&p=1")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 - GET - sends an appropriate status and error message when an invalid page is passed", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=ABC")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("404 - GET - sends an appropriate status and error message when non-existent page is passed", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=1000")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
       });
   });
   test("201 - POST - will return a successfully posted article object with the request body properties of author, title, body, topic and article_img_url", () => {
