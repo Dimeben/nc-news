@@ -173,4 +173,38 @@ describe("/api/articles", () => {
         expect(res.body.msg).toBe("Page not found");
       });
   });
+  test("200 - GET - will return an array of all article objects sorted by a valid query column name and ordered in a valid query order - title/asc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=asc")
+      .expect(200)
+      .then((res) => {
+        const articles = res.body.articles;
+        expect(articles).toBeSortedBy("title", { ascending: true });
+      });
+  });
+  test("200 - GET - will return an array of all article objects sorted by a valid query column name and ordered in a valid query order - author/desc", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=desc")
+      .expect(200)
+      .then((res) => {
+        const articles = res.body.articles;
+        expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("400 - GET - sends an appropriate status and error message when an invalid sort_by column is passed", () => {
+    return request(app)
+      .get("/api/articles?sort_by=banana33&order=desc")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 - GET - sends an appropriate status and error message when an invalid order is passed", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=how-should-i-know")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
 });
