@@ -91,6 +91,25 @@
       ]
     }
   },
+  "POST /api/articles": {
+    "description": "posts a new article",
+    "queries": [],
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 100,
+          "author": "news_man",
+          "title": "What a time to be alive",
+          "body": "Amazing!",
+          "topic": "mitch",
+          "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          "votes": 0,
+          "create_at": 1904113380000,
+          "comment_count": 0
+        }
+      ]
+    }
+  },
   "PATCH /api/articles/:article_id/": {
     "description": "updates an article's votes based on the number of votes provided in the input object",
     "queries": [],

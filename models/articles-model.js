@@ -69,3 +69,32 @@ exports.updateArticleVotes = (articleId, votes) => {
       return article;
     });
 };
+
+exports.createArticle = (author, title, body, topic, article_img_url) => {
+  return db
+    .query(
+      `
+      INSERT INTO articles (author, title, body, topic, article_img_url)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *;
+    `,
+      [author, title, body, topic, article_img_url]
+    )
+    .then((result) => {
+      const article = result.rows[0];
+
+      return db.query(
+        `
+        SELECT articles.*, COALESCE(COUNT(comments.article_id), 0) AS comment_count
+        FROM articles
+        LEFT JOIN comments ON articles.article_id = comments.article_id
+        WHERE articles.article_id = $1
+        GROUP BY articles.article_id;
+      `,
+        [article.article_id]
+      );
+    })
+    .then((result) => {
+      return result.rows[0];
+    });
+};

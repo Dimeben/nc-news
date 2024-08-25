@@ -3,6 +3,7 @@ const {
   getArticles,
   getAllArticles,
   patchArticleVotes,
+  postArticle,
 } = require("../controllers/articles-controller");
 const {
   getComments,
@@ -10,7 +11,7 @@ const {
 } = require("../controllers/comments-controller");
 
 articlesRouter.route("/:article_id").get(getArticles).patch(patchArticleVotes);
-articlesRouter.get("/", getAllArticles);
+articlesRouter.route("/").get(getAllArticles).post(postArticle);
 articlesRouter
   .route("/:article_id/comments")
   .get(getComments)
