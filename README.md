@@ -24,6 +24,7 @@ To begin, create 2 .env files:
 </h3>
 
 .env.test
+<br>
 .env.development
 
 <h3>
@@ -36,7 +37,7 @@ PGDATABASE=nc_news_test
 
 PGDATABASE=nc_news_test
 
-Double check that these .env files are .gitignored.
+> Double check that these .env files are .gitignored.
 
 Run npm install
 
