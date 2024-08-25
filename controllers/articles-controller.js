@@ -39,23 +39,29 @@ exports.getAllArticles = (req, res, next) => {
   let topic = req.query.topic ? req.query.topic : "all";
   let sortBy = req.query.sort_by ? req.query.sort_by : "created_at";
   let order = req.query.order ? req.query.order.toUpperCase() : "DESC";
+  let limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
+  let page = req.query.p ? parseInt(req.query.p, 10) : 1;
 
   if (
     !validSortBy.includes(sortBy) ||
     !validOrder.includes(order) ||
-    !validTopic.includes(topic)
+    !validTopic.includes(topic) ||
+    isNaN(limit) ||
+    limit <= 0 ||
+    isNaN(page) ||
+    page <= 0
   ) {
     return next({ status: 400, msg: "Bad request" });
   }
 
-  selectAllArticles(sortBy, order, topic)
-    .then((articles) => {
+  selectAllArticles(sortBy, order, topic, limit, page)
+    .then(({ articles, total_count }) => {
       articles.forEach((article) => {
         article.article_id = +article.article_id;
         article.votes = +article.votes;
         article.comment_count = +article.comment_count;
       });
-      res.status(200).send({ articles });
+      res.status(200).send({ articles, total_count });
     })
     .catch((err) => {
       next(err);

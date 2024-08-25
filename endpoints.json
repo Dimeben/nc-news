@@ -25,7 +25,9 @@
           "article_img_url"
         ]
       },
-      { "order": ["ASC", "DESC"] }
+      { "order": ["ASC", "DESC"] },
+      { "limit": "limits the number of responses - pagination" },
+      { "p": ["sets the page number - pagination"] }
     ],
     "exampleResponse": {
       "articles": [
