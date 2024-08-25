@@ -35,6 +35,23 @@ describe("/api/articles/:article_id", () => {
         expect(article).toHaveProperty("article_img_url", expect.any(String));
       });
   });
+  test("200 - GET - will return an article object will all properties and a comment_count property", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then((res) => {
+        const article = res.body.article;
+        expect(article).toHaveProperty("article_id", expect.any(Number));
+        expect(article).toHaveProperty("title", expect.any(String));
+        expect(article).toHaveProperty("topic", expect.any(String));
+        expect(article).toHaveProperty("author", expect.any(String));
+        expect(article).toHaveProperty("body", expect.any(String));
+        expect(article).toHaveProperty("created_at", expect.any(String));
+        expect(article).toHaveProperty("votes", expect.any(Number));
+        expect(article).toHaveProperty("article_img_url", expect.any(String));
+        expect(article).toHaveProperty("comment_count", expect.any(Number));
+      });
+  });
   test("404 - GET - sends an appropriate status and error message when a non-exist article_id is used", () => {
     return request(app)
       .get("/api/articles/1234")
@@ -148,6 +165,7 @@ describe("/api/articles", () => {
           expect(article).toHaveProperty("created_at", expect.any(String));
           expect(article).toHaveProperty("votes", expect.any(Number));
           expect(article).toHaveProperty("article_img_url", expect.any(String));
+          expect(article).toHaveProperty("comment_count", expect.any(Number));
           expect(article).not.toHaveProperty("body");
         });
         expect(articles).toBeSortedBy("created_at", { descending: true });
@@ -223,6 +241,7 @@ describe("/api/articles", () => {
           expect(article).toHaveProperty("created_at", expect.any(String));
           expect(article).toHaveProperty("votes", expect.any(Number));
           expect(article).toHaveProperty("article_img_url", expect.any(String));
+          expect(article).toHaveProperty("comment_count", expect.any(Number));
           expect(article).not.toHaveProperty("body");
         });
         expect(articles).toBeSortedBy("created_at", { descending: true });

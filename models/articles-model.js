@@ -6,7 +6,16 @@ exports.selectArticles = (articleId) => {
   }
 
   return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [articleId])
+    .query(
+      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.body, articles.created_at, articles.votes, articles.article_img_url, 
+       COALESCE(COUNT(comments.article_id), 0) AS comment_count 
+       FROM articles
+       LEFT JOIN comments ON articles.article_id = comments.article_id
+       WHERE articles.article_id = $1
+       GROUP BY articles.article_id;
+    `,
+      [articleId]
+    )
     .then((result) => {
       const article = result.rows[0];
       if (!article) {
