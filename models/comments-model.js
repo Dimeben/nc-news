@@ -61,3 +61,25 @@ exports.removeComment = (commentId) => {
       return;
     });
 };
+
+exports.updateComment = (commentId, votes) => {
+  if (!Number(commentId) || !Number(votes)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  return exports
+    .selectComments(commentId)
+    .then(() => {
+      return db.query(
+        `UPDATE comments SET votes = votes+$1 WHERE comment_id = $2 RETURNING *`,
+        [votes, commentId]
+      );
+    })
+    .then((result) => {
+      const comment = result.rows[0];
+      if (!comment) {
+        return Promise.reject({ status: 404, msg: "Page not found" });
+      }
+      return comment;
+    });
+};

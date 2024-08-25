@@ -155,4 +155,76 @@ describe("/api/comments/:comment_id", () => {
         expect(res.body.msg).toBe("Page not found");
       });
   });
+  test("200 - PATCH - will return an updated comment object, using a newVotes object (adding votes)", () => {
+    const newVotes = { inc_votes: +100 };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVotes)
+      .expect(200)
+      .then((res) => {
+        const comment = res.body.comment;
+        expect(comment.votes).toBe(116);
+        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+        expect(comment).toHaveProperty("votes", expect.any(Number));
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+        expect(comment).toHaveProperty("author", expect.any(String));
+        expect(comment).toHaveProperty("article_id", expect.any(Number));
+      });
+  });
+  test("200 - PATCH - will return an updated comment object, using a newVotes object (subtracting votes)", () => {
+    const newVotes = { inc_votes: -150 };
+    return request(app)
+      .patch("/api/comments/3")
+      .send(newVotes)
+      .expect(200)
+      .then((res) => {
+        const comment = res.body.comment;
+        expect(comment.votes).toBe(-50);
+        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+        expect(comment).toHaveProperty("votes", expect.any(Number));
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+        expect(comment).toHaveProperty("author", expect.any(String));
+        expect(comment).toHaveProperty("article_id", expect.any(Number));
+      });
+  });
+  test("404 - PATCH - sends an appropriate status and error message when a non-exist comment_id is used", () => {
+    const newVotes = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/comments/2000")
+      .send(newVotes)
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+  test("400 - PATCH - sends an appropriate status and error message when an invalid datatype is posted", () => {
+    const newVotes = { inc_votes: { votes: 10 } };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 - PATCH - sends an appropriate status and error message when an invalid comment_id is passed", () => {
+    const newVotes = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/comments/im-an-id")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 - PATCH - sends an appropriate status and error message when an invalid votes object is posted", () => {
+    const newVotes = { inc_votes: "give me votes", even_more_votes: "hello" };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(newVotes)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
 });

@@ -53,7 +53,8 @@
           "body": "I find this existence challenging",
           "created_at": 1594329060000,
           "votes": 100,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "comment_count": 23
         }
       ]
     }
@@ -91,7 +92,7 @@
     }
   },
   "PATCH /api/articles/:article_id/": {
-    "description": "updates an articles votes based on the number of votes provided in the input object",
+    "description": "updates an article's votes based on the number of votes provided in the input object",
     "queries": [],
     "exampleInput": { "inc_votes": 10 },
     "exampleResponse": {
@@ -113,11 +114,40 @@
     "queries": [],
     "exampleResponse": { "msg": "Comment deleted" }
   },
-  "POST GET /api/users": {
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates a comment's votes based on the number of votes provided in the input object",
+    "queries": [],
+    "exampleInput": { "inc_votes": 10 },
+    "exampleResponse": {
+      "comments/1/": [
+        {
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "votes": 26,
+          "author": "butter_bridge",
+          "article_id": 9,
+          "created_at": 1586179020000
+        }
+      ]
+    }
+  },
+  "GET /api/users": {
     "description": "serves an array of all users object",
     "queries": [],
     "exampleResponse": {
       "/user": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "responds with a single user by username",
+    "queries": [],
+    "exampleResponse": {
+      "user/butter_bridge": [
         {
           "username": "butter_bridge",
           "name": "jonny",
