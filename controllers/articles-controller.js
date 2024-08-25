@@ -15,6 +15,7 @@ const validSortBy = [
   "comment_count",
 ];
 const validOrder = ["ASC", "DESC"];
+const validTopic = ["mitch", "cats", "paper", "all"];
 
 exports.getArticles = (req, res, next) => {
   const articleId = req.params.article_id;
@@ -28,21 +29,19 @@ exports.getArticles = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  let sortBy = "";
-  let order = "";
-  if (Object.keys(req.query).length === 0) {
-    sortBy = "created_at";
-    order = "DESC";
-  } else {
-    sortBy = req.query.sort_by;
-    order = req.query.order.toUpperCase();
-  }
+  let topic = req.query.topic ? req.query.topic : "all";
+  let sortBy = req.query.sort_by ? req.query.sort_by : "created_at";
+  let order = req.query.order ? req.query.order.toUpperCase() : "DESC";
 
-  if (!validSortBy.includes(sortBy) || !validOrder.includes(order)) {
+  if (
+    !validSortBy.includes(sortBy) ||
+    !validOrder.includes(order) ||
+    !validTopic.includes(topic)
+  ) {
     return next({ status: 400, msg: "Bad request" });
   }
 
-  selectAllArticles(sortBy, order)
+  selectAllArticles(sortBy, order, topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })

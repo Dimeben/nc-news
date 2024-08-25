@@ -207,4 +207,46 @@ describe("/api/articles", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
+  test("200 - GET - will return an array of all article objects which the topic query is omitted", () => {
+    return request(app)
+      .get("/api/articles?topic=")
+      .expect(200)
+      .then((res) => {
+        const articles = res.body.articles;
+        expect(articles).toHaveLength(13);
+        expect(Array.isArray(articles)).toBe(true);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("article_id", expect.any(Number));
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("article_img_url", expect.any(String));
+          expect(article).not.toHaveProperty("body");
+        });
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("200 - GET - will return an array of all article objects which have a topic property of the passed query", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then((res) => {
+        const articles = res.body.articles;
+        expect(articles).toHaveLength(12);
+        expect(Array.isArray(articles)).toBe(true);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("400 - GET - sends an appropriate status and error message when an invalid topic is passed", () => {
+    return request(app)
+      .get("/api/articles?topic=banana123")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
 });
