@@ -42,3 +42,27 @@ describe("/api/users", () => {
       });
   });
 });
+
+describe("/api/users/:username", () => {
+  test("200 - GET - will return a user object which has the passed username. It will have the properties of username, avatar_url and name", () => {
+    return request(app)
+      .get("/api/users/lurker")
+      .expect(200)
+      .then((res) => {
+        const user = res.body.user;
+        expect(user.username).toBe("lurker");
+        expect(user.name).toBe("do_nothing");
+        expect(user.avatar_url).toBe(
+          "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+        );
+      });
+  });
+  test("404 - GET - sends an appropriate status and error message when a non-exist username is used", () => {
+    return request(app)
+      .get("/api/users/bananaman")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+});
