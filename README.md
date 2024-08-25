@@ -1,91 +1,144 @@
-<h1>Northcoders News API</h1>
+# Northcoders News API
 
-<h2>Skills</h2>
+## Skills
 
-<h3>
-<strong> > JavaScript </strong><br>
-<strong> > Express </strong><br>
-<strong> > Jest </strong><br>
-<strong> > SuperTest </strong><br>
-<strong> > Postgres </strong><br>
-<strong> > PSQL </strong><br>
-<strong> > TDD </strong><br>
-<strong> > FS/Promises </strong><br>
-<strong> > Middleware </strong><br>
-<strong> > Error-Handling </strong><br>
-<strong> > Environment Variables </strong><br>
-<strong> > Model View Controller </strong><br>
-</h3>
+- **JavaScript**
+- **Express**
+- **Jest**
+- **SuperTest**
+- **Postgres**
+- **PSQL**
+- **TDD**
+- **FS/Promises**
+- **Middleware**
+- **Error-Handling**
+- **Environment Variables**
+- **Model View Controller**
+- **Hosting**
 
-<h2>Setup</h2>
+## Setup
 
-<h3>
-To begin, create 2 .env files:
-</h3>
+#### Clone the repository:
 
-.env.test
-<br>
-.env.development
+> Click the green `Code` button and copy the URL <br>
 
-<h3>
-In .env.test, write:
-</h3>
-PGDATABASE=nc_news_test
+#### In your local machine's terminal, run:
 
-<h3>In .env.development, write:
-</h3>
+> git clone https://github.com/Dimeben/nc-news.git <br>
 
-PGDATABASE=nc_news_test
+#### Once it has downloaded, run:
 
-> Double check that these .env files are .gitignored.
+> cd /nc-news <br>
+> code . <br>
 
-Run npm install
+#### To begin, create two `.env` files:
 
-<h2>Endpoints</h2>
+> `.env.test` <br>
 
-<h4>GET /api/topics</h4>
+> `.env.development`
 
-> responds with a list of topics
+#### In `.env.test`, write:
 
-<h4>GET /api</h4>
+> PGDATABASE=nc_news_test
 
-> responds with a list of available endpoints
+#### In .env.development, write:
 
-<h4>GET /api/articles/:article_id</h4>
+> PGDATABASE=nc_news_test <br>
 
-> responds with a single article by article_id
+##### Double-check that these `.env` files are included in your `.gitignore`
 
-<h4>GET /api/articles</h4>
+#### Install npm & Node.js by following this link:
 
-> responds with a list of articles
+[Install npm and Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-<h4>GET /api/articles/:article_id/comments</h4>
+> Made using Node.js v22.4.1
 
-> responds with a list of comments by article_id
+#### Install PostgreSQL by following this link:
 
-<h4>POST /api/articles/:article_id/comments</h4>
+[Install PostgreSQL](https://www.postgresql.org/download/)
 
-> add a comment by article_id
+> Made using PostgreSQL 14.13
 
-<h4>PATCH /api/articles/:article_id</h4>
+#### Install the dependencies by running the following in your terminal:
 
-> updates an article by article_id
+> npm install <br>
+> npm install jest <br>
+> npm install supertest <br>
+> npm install express <br>
+> npm install jest-sorted <br>
+> npm install pg-format <br>
+> npm install dotenv --save <br>
+> npm install nodemon <br>
 
-<h4>DELETE /api/comments/:comment_id</h4>
+#### Initialise the databases by running:
 
-> deletes a comment by comment_id
+> npm run setup-db <br>
 
-<h4>GET /api/users</h4>
+#### Seed the databases by running:
 
-> responds with a list of users
+> npm run seed <br>
 
-<h4>GET /api/articles (queries)</h4>
+#### Run the tests by running:
 
-> allows articles to be filtered and sorted
+> npm test <br>
 
-<h4>GET /api/articles/:article_id (comment count)</h4>
+#### Initialise the server on port 8080 by running:
 
-> adds a comment count to the response when retrieving a single article
+> npm run start <br>
+
+#### To access the endpoints on your browser, append them to the following base URL:
+
+> https://nc-news-bpw3.onrender.com
+
+## Endpoints
+
+#### GET /api/topics
+
+Responds with a list of topics.
+
+#### GET /api
+
+Responds with a list of available endpoints.
+
+#### GET /api/articles/:articleid
+
+Responds with a single article by article_id.
+
+#### GET /api/articles
+
+Responds with a list of articles.
+
+#### GET /api/articles/:articleid/comments
+
+Responds with a list of comments by article_id.
+
+#### POST /api/articles/:articleid/comments
+
+Adds a comment by article_id.
+
+#### PATCH /api/articles/:articleid
+
+Updates an article by article_id.
+
+#### DELETE /api/comments/:commentid
+
+Deletes a comment by comment_id.
+
+#### GET /api/users
+
+Responds with a list of users.
+
+#### GET /api/articles?topic=
+
+#### GET /api/articles?sortby=
+
+#### GET /api/articles?order=
+
+Allows articles to be filtered and sorted.
+
+#### GET /api/articles/:articleid (comment count)
+
+Adds a comment count to the response when retrieving a single article.
 
 ---
 

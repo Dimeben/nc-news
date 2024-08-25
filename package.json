@@ -8,7 +8,7 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
     "prepare": "husky install",
-    "start": "node listen.js",
+    "start": "nodemon ./listen.js localhost 8080",
     "seed-prod": "NODE_ENV=production npm run seed"
   },
   "repository": {
@@ -32,6 +32,7 @@
     "dotenv": "^16.0.0",
     "express": "^4.19.2",
     "jest-sorted": "^1.0.15",
+    "nodemon": "^3.1.4",
     "pg": "^8.12.0",
     "supertest": "^7.0.0"
   },
