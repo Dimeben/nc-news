@@ -141,7 +141,7 @@ describe("/api/articles/:article_id", () => {
   test("400 - PATCH - sends an appropriate status and error message when an invalid votes object is posted", () => {
     const newVotes = { inc_votes: "give me votes", even_more_votes: "hello" };
     return request(app)
-      .patch("/api/articles/1")
+      .patch("/api/articles/2")
       .send(newVotes)
       .expect(400)
       .then((res) => {
@@ -150,14 +150,12 @@ describe("/api/articles/:article_id", () => {
   });
   test("204 - DELETE - deletes article and related comments and sends an appropriate status code and message", () => {
     return request(app)
-      .delete("/api/articles/1")
-      .expect(200)
+      .delete("/api/articles/5")
+      .expect(204)
       .then((res) => {
-        console.log(res);
-        expect(res.body.msg).toBe("Article 1 and related comments deleted");
+        expect(res.statusCode).toBe(204);
       });
   });
-
   test("400 - DELETE - sends an appropriate status and error message when an invalid article_id is passed", () => {
     return request(app)
       .delete("/api/articles/im-an-id")

@@ -106,14 +106,10 @@ exports.postArticle = (req, res, next) => {
 
 exports.deleteArticle = (req, res, next) => {
   const articleId = req.params.article_id;
+
   removeArticle(articleId)
-    .then((deletedArticleId) => {
-      if (!deletedArticleId) {
-        return next({ status: 404, msg: "Page not found" });
-      }
-      res.status(200).send({
-        msg: `Article ${deletedArticleId} and related comments deleted`,
-      });
+    .then(() => {
+      res.status(204).end();
     })
     .catch((err) => {
       next(err);

@@ -117,19 +117,22 @@ exports.removeArticle = (articleId) => {
   if (isNaN(articleId)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
-  return db
-    .query(
-      `
-      DELETE FROM articles
-      WHERE article_id=$1
-      RETURNING article_id;
-    `,
-      [articleId]
-    )
+
+  return exports
+    .selectArticles(articleId)
+    .then(() => {
+      return db.query(
+        `
+        DELETE FROM articles
+        WHERE article_id=$1
+      `,
+        [articleId]
+      );
+    })
     .then((result) => {
       if (result.rowCount === 0) {
-        return null;
+        return Promise.reject({ status: 404, msg: "Page not found" });
       }
-      return result.rows[0].article_id;
+      return;
     });
 };
