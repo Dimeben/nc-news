@@ -60,7 +60,6 @@ exports.selectAllArticles = (
 };
 
 exports.updateArticleVotes = (articleId, votes) => {
-
   return exports
     .selectArticle(articleId)
     .then(() => {
@@ -108,7 +107,6 @@ exports.createArticle = (author, title, body, topic, article_img_url) => {
 };
 
 exports.removeArticle = (articleId) => {
-
   return exports
     .selectArticle(articleId)
     .then(() => {

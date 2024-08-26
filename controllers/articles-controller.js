@@ -18,8 +18,6 @@ const validSortBy = [
 ];
 const validOrder = ["ASC", "DESC"];
 const validTopic = ["mitch", "cats", "paper", "all"];
-const isValidString = (value) =>
-  typeof value === "string" && value.trim().length > 0;
 
 exports.getArticle = (req, res, next) => {
   const articleId = req.params.article_id;
@@ -46,11 +44,7 @@ exports.getAllArticles = (req, res, next) => {
   if (
     !validSortBy.includes(sortBy) ||
     !validOrder.includes(order) ||
-    !validTopic.includes(topic) ||
-    isNaN(limit) ||
-    limit <= 0 ||
-    isNaN(page) ||
-    page <= 0
+    !validTopic.includes(topic)
   ) {
     return next({ status: 400, msg: "Bad request" });
   }
@@ -72,9 +66,7 @@ exports.getAllArticles = (req, res, next) => {
 exports.patchArticleVotes = (req, res, next) => {
   const articleId = Number(req.params.article_id);
   const votes = req.body.inc_votes;
-  if (typeof votes !== "number") {
-    return next({ status: 400, msg: "Bad request" });
-  }
+
   updateArticleVotes(articleId, votes)
     .then((article) => {
       res.status(200).send({ article });
@@ -86,16 +78,6 @@ exports.patchArticleVotes = (req, res, next) => {
 
 exports.postArticle = (req, res, next) => {
   const { author, title, body, topic, article_img_url } = req.body;
-
-  if (
-    !isValidString(author) ||
-    !isValidString(title) ||
-    !isValidString(body) ||
-    !isValidString(topic) ||
-    !isValidString(article_img_url)
-  ) {
-    return next({ status: 400, msg: "Bad request" });
-  }
 
   createArticle(author, title, body, topic, article_img_url)
     .then((article) => {

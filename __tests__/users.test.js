@@ -33,14 +33,6 @@ describe("/api/users", () => {
         });
       });
   });
-  test("404 - GET - sends an appropriate status and error message when an invalid URL is passed", () => {
-    return request(app)
-      .get("/api/use")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
 });
 
 describe("/api/users/:username", () => {
@@ -57,6 +49,9 @@ describe("/api/users/:username", () => {
         );
       });
   });
+});
+
+describe("/api/users/:username", () => {
   test("404 - GET - sends an appropriate status and error message when a non-exist username is used", () => {
     return request(app)
       .get("/api/users/bananaman")

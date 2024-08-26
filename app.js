@@ -7,6 +7,7 @@ const {
   serverErrorHandler,
   invalidInputErrorHandler,
   invalidIdErrorHandler,
+  invalidDataErrorHandler,
 } = require("./error-handlers");
 
 app.use(express.json());
@@ -20,6 +21,7 @@ app.all("/*", (req, res) => {
 app.use(psqlErrorHandler);
 app.use(invalidInputErrorHandler);
 app.use(invalidIdErrorHandler);
+app.use(invalidDataErrorHandler);
 app.use(customErrorHandler);
 app.use(serverErrorHandler);
 

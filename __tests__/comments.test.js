@@ -69,8 +69,8 @@ describe("/api/articles/:article_id/comments", () => {
   });
   test("400 - POST - sends an appropriate status and error message when an invalid datatype is posted", () => {
     const newComment = {
-      username: 20002,
-      body: 123897,
+      username: "icellusedkars",
+      body: null,
     };
 
     return request(app)

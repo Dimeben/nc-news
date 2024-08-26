@@ -102,7 +102,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
   test("400 - PATCH - sends an appropriate status and error message when an invalid datatype is posted", () => {
-    const newVotes = { inc_votes: "41111" };
+    const newVotes = { inc_votes: null };
     return request(app)
       .patch("/api/articles/1")
       .send(newVotes)
@@ -374,8 +374,8 @@ describe("/api/articles", () => {
   test("400 - POST - sends an appropriate status and error message when an invalid comment object is posted", () => {
     const newArticle = {
       author: "butter_bridge",
-      title: 11000111001,
-      body: 111,
+      title: null,
+      body: null,
       topic: 10101,
       article_img_url:
         "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",

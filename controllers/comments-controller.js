@@ -16,10 +16,6 @@ exports.getComments = (req, res, next) => {
       ? 1
       : parseInt(req.query.p, 10);
 
-  if (isNaN(limit) || limit <= 0 || isNaN(page) || page <= 0) {
-    return next({ status: 400, msg: "Bad request" });
-  }
-
   selectComments(articleId, limit, page)
     .then(({ comments, total_count }) => {
       res.status(200).send({ comments, total_count });
@@ -41,7 +37,6 @@ exports.postComments = (req, res, next) => {
       next(err);
     });
 };
-
 
 exports.deleteComment = (req, res, next) => {
   const commentId = req.params.comment_id;

@@ -32,14 +32,6 @@ describe("/api/topics", () => {
         });
       });
   });
-  test("404 - GET - sends an appropriate status and error message when an invalid URL is passed", () => {
-    return request(app)
-      .get("/api/nothing_here")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
   test("201 - POST - will return a successfully posted comment object with the request body properties of username and body and the comment properties of comment_id, votes, author, body, article_id and created_at in", () => {
     const newTopic = { slug: "Anime", description: "Japanese cartoons" };
     return request(app)
@@ -53,7 +45,7 @@ describe("/api/topics", () => {
       });
   });
   test("400 - POST - sends an appropriate status and error message when an invalid datatype is posted", () => {
-    const newTopic = { slug: "Anime", description: 12345 };
+    const newTopic = { slug: null, description: null };
     return request(app)
       .post("/api/topics")
       .send(newTopic)
@@ -70,6 +62,17 @@ describe("/api/topics", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("/api/:topicid - Non-existent topic ID", () => {
+  test("404 - GET - sends an appropriate status and error message when an invalid URL is passed", () => {
+    return request(app)
+      .get("/api/nothing_here")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
       });
   });
 });

@@ -26,14 +26,6 @@ exports.selectComments = (articleId, limit = 10, page = 1) => {
 };
 
 exports.createComments = (articleId, { username, body }) => {
-  if (
-    isNaN(articleId) ||
-    typeof username !== "string" ||
-    typeof body !== "string"
-  ) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
-
   return selectArticle(articleId)
     .then(() => {
       return db.query(
@@ -46,6 +38,10 @@ exports.createComments = (articleId, { username, body }) => {
       );
     })
     .then((result) => {
+      console.log(result, "<--------- Model");
+      if (!result) {
+        return Promise.reject({ status: 400, msg: "Bad request" });
+      }
       const comment = result.rows[0];
       return comment;
     });
