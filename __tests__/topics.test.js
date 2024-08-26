@@ -40,4 +40,36 @@ describe("/api/topics", () => {
         expect(res.body.msg).toBe("Page not found");
       });
   });
+  test("201 - POST - will return a successfully posted comment object with the request body properties of username and body and the comment properties of comment_id, votes, author, body, article_id and created_at in", () => {
+    const newTopic = { slug: "Anime", description: "Japanese cartoons" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(201)
+      .then((res) => {
+        const topic = res.body.topic;
+        expect(topic.slug).toBe("Anime");
+        expect(topic.description).toBe("Japanese cartoons");
+      });
+  });
+  test("400 - POST - sends an appropriate status and error message when an invalid datatype is posted", () => {
+    const newTopic = { slug: "Anime", description: 12345 };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 - POST - sends an appropriate status and error message when an invalid comment object is posted", () => {
+    const newTopic = { topics: "Anime", facts: "What a fact!" };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
 });
