@@ -10,8 +10,6 @@ const {
   commentData,
 } = require("../db/data/test-data/index");
 
-jest.setTimeout(10000);
-
 beforeEach(() => {
   return seed({ topicData, userData, articleData, commentData });
 });

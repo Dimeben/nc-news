@@ -114,7 +114,7 @@
       ]
     }
   },
-  "PATCH /api/articles/:article_id/": {
+  "PATCH /api/articles/:article_id": {
     "description": "updates an article's votes based on the number of votes provided in the input object",
     "queries": [],
     "exampleInput": { "inc_votes": 10 },

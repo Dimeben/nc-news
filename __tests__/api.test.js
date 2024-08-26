@@ -23,35 +23,23 @@ describe("/api", () => {
       .get("/api")
       .expect(200)
       .then((res) => {
-        const endpoints = JSON.parse(res.text);
-        expect(endpoints.apis["GET /api"]).toHaveProperty(
-          "description",
-          expect.any(String)
+        const endpoints = res.body.apis;
+        expect(endpoints).toHaveProperty("GET /api");
+        expect(endpoints).toHaveProperty("GET /api/topics");
+        expect(endpoints).toHaveProperty("GET /api/articles");
+        expect(endpoints).toHaveProperty("GET /api/articles/:article_id");
+        expect(endpoints).toHaveProperty(
+          "GET /api/articles/:article_id/comments"
         );
-        expect(endpoints.apis["GET /api/topics"]).toHaveProperty(
-          "description",
-          expect.any(String)
+        expect(endpoints).toHaveProperty(
+          "POST /api/articles/:article_id/comments"
         );
-        expect(endpoints.apis["GET /api/topics"]).toHaveProperty(
-          "queries",
-          expect.any(Array)
-        );
-        expect(endpoints.apis["GET /api/topics"]).toHaveProperty(
-          "exampleResponse",
-          expect.any(Object)
-        );
-        expect(endpoints.apis["GET /api/articles"]).toHaveProperty(
-          "description",
-          expect.any(String)
-        );
-        expect(endpoints.apis["GET /api/articles"]).toHaveProperty(
-          "queries",
-          expect.any(Array)
-        );
-        expect(endpoints.apis["GET /api/articles"]).toHaveProperty(
-          "exampleResponse",
-          expect.any(Object)
-        );
+        expect(endpoints).toHaveProperty("POST /api/articles");
+        expect(endpoints).toHaveProperty("PATCH /api/articles/:article_id");
+        expect(endpoints).toHaveProperty("DELETE /api/comments/:comment_id");
+        expect(endpoints).toHaveProperty("PATCH /api/comments/:comment_id");
+        expect(endpoints).toHaveProperty("GET /api/users");
+        expect(endpoints).toHaveProperty("GET /api/users/:username");
       });
   });
   test("404 - GET - sends an appropriate status and error message when an invalid URL is passed", () => {
