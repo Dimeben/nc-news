@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { selectArticles } = require("../models/articles-model");
+const { selectArticle } = require("../models/articles-model");
 
 exports.selectComments = (articleId, limit = 10, page = 1) => {
   if (isNaN(articleId)) {
@@ -38,7 +38,7 @@ exports.createComments = (articleId, { username, body }) => {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  return selectArticles(articleId)
+  return selectArticle(articleId)
     .then(() => {
       return db.query(
         `

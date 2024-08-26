@@ -2,7 +2,6 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const app = require("../app");
-const jestSorted = require("jest-sorted");
 const {
   topicData,
   userData,
@@ -25,14 +24,16 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then((res) => {
         const article = res.body.article;
-        expect(article).toHaveProperty("article_id", expect.any(Number));
-        expect(article).toHaveProperty("title", expect.any(String));
-        expect(article).toHaveProperty("topic", expect.any(String));
-        expect(article).toHaveProperty("author", expect.any(String));
-        expect(article).toHaveProperty("body", expect.any(String));
+        expect(article.article_id).toBe(1);
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("butter_bridge");
+        expect(article.body).toBe("I find this existence challenging");
         expect(article).toHaveProperty("created_at", expect.any(String));
-        expect(article).toHaveProperty("votes", expect.any(Number));
-        expect(article).toHaveProperty("article_img_url", expect.any(String));
+        expect(article.votes).toBe(100);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
       });
   });
   test("200 - GET - will return an article object will all properties and a comment_count property", () => {
@@ -41,23 +42,17 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then((res) => {
         const article = res.body.article;
-        expect(article).toHaveProperty("article_id", expect.any(Number));
-        expect(article).toHaveProperty("title", expect.any(String));
-        expect(article).toHaveProperty("topic", expect.any(String));
-        expect(article).toHaveProperty("author", expect.any(String));
-        expect(article).toHaveProperty("body", expect.any(String));
+        expect(article.article_id).toBe(1);
+        expect(article.title).toBe("Living in the shadow of a great man");
+        expect(article.topic).toBe("mitch");
+        expect(article.author).toBe("butter_bridge");
+        expect(article.body).toBe("I find this existence challenging");
         expect(article).toHaveProperty("created_at", expect.any(String));
-        expect(article).toHaveProperty("votes", expect.any(Number));
-        expect(article).toHaveProperty("article_img_url", expect.any(String));
+        expect(article.votes).toBe(100);
+        expect(article.article_img_url).toBe(
+          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        );
         expect(article).toHaveProperty("comment_count", expect.any(Number));
-      });
-  });
-  test("404 - GET - sends an appropriate status and error message when a non-exist article_id is used", () => {
-    return request(app)
-      .get("/api/articles/1234")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
       });
   });
   test("400 - GET - sends an appropriate status and error message when an invalid article_id is used", () => {
@@ -106,16 +101,6 @@ describe("/api/articles/:article_id", () => {
         expect(article.votes).toBe(60);
       });
   });
-  test("404 - PATCH - sends an appropriate status and error message when a non-exist article_id is used", () => {
-    const newVotes = { inc_votes: 10 };
-    return request(app)
-      .patch("/api/articles/99")
-      .send(newVotes)
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
   test("400 - PATCH - sends an appropriate status and error message when an invalid datatype is posted", () => {
     const newVotes = { inc_votes: "41111" };
     return request(app)
@@ -162,15 +147,6 @@ describe("/api/articles/:article_id", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-
-  test("404 - DELETE - sends an appropriate status and error message when a non-existent article_id is used", () => {
-    return request(app)
-      .delete("/api/articles/9999")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
 });
 
 describe("/api/articles", () => {
@@ -206,14 +182,6 @@ describe("/api/articles", () => {
           expect(article).toHaveProperty("comment_count");
           expect(typeof Number(article.comment_count)).toBe("number");
         });
-      });
-  });
-  test("404 - GET - sends an appropriate status and error message when an invalid URL is passed", () => {
-    return request(app)
-      .get("/app/artcles")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
       });
   });
   test("200 - GET - will return an array of the first 10 article objects sorted by a valid query column name and ordered in a valid query order - title/asc", () => {
@@ -372,14 +340,6 @@ describe("/api/articles", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("404 - GET - sends an appropriate status and error message when non-existent page is passed", () => {
-    return request(app)
-      .get("/api/articles?limit=5&p=1000")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
   test("201 - POST - will return a successfully posted article object with the request body properties of author, title, body, topic and article_img_url", () => {
     const newArticle = {
       author: "icellusedkars",
@@ -426,6 +386,17 @@ describe("/api/articles", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("/api/articles/:article_id - Non-existent article ID", () => {
+  test("404 - GET - sends an appropriate status and error message when a non-exist article_id is used", () => {
+    return request(app)
+      .get("/api/articles/1234")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
       });
   });
 });

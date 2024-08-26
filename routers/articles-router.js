@@ -1,6 +1,6 @@
 const articlesRouter = require("express").Router();
 const {
-  getArticles,
+  getArticle,
   getAllArticles,
   patchArticleVotes,
   postArticle,
@@ -13,7 +13,7 @@ const {
 
 articlesRouter
   .route("/:article_id")
-  .get(getArticles)
+  .get(getArticle)
   .patch(patchArticleVotes)
   .delete(deleteArticle);
 articlesRouter.route("/").get(getAllArticles).post(postArticle);

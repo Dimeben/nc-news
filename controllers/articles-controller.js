@@ -1,6 +1,6 @@
 const { sort } = require("../db/data/test-data/articles");
 const {
-  selectArticles,
+  selectArticle,
   selectAllArticles,
   updateArticleVotes,
   createArticle,
@@ -21,9 +21,9 @@ const validTopic = ["mitch", "cats", "paper", "all"];
 const isValidString = (value) =>
   typeof value === "string" && value.trim().length > 0;
 
-exports.getArticles = (req, res, next) => {
+exports.getArticle = (req, res, next) => {
   const articleId = req.params.article_id;
-  selectArticles(articleId)
+  selectArticle(articleId)
     .then((article) => {
       article.article_id = +article.article_id;
       article.votes = +article.votes;

@@ -2,7 +2,6 @@ const request = require("supertest");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed");
 const app = require("../app");
-const jestSorted = require("jest-sorted");
 const {
   topicData,
   userData,

@@ -1,13 +1,9 @@
 const db = require("../db/connection");
 
-exports.selectArticles = (articleId) => {
-  if (isNaN(articleId)) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
-
+exports.selectArticle = (articleId) => {
   return db
     .query(
-      `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.body, articles.created_at, articles.votes, articles.article_img_url, 
+      `SELECT articles.*, 
        COALESCE(COUNT(comments.article_id), 0) AS comment_count 
        FROM articles
        LEFT JOIN comments ON articles.article_id = comments.article_id
@@ -34,7 +30,7 @@ exports.selectAllArticles = (
 ) => {
   let baseQuery = `
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
-    COALESCE(COUNT(comments.article_id), 0) AS comment_count
+    COALESCE(COUNT(comments.article_id), 0):: INT AS comment_count
     FROM articles
     LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
@@ -51,6 +47,7 @@ exports.selectAllArticles = (
   } OFFSET $${queryParams.length + 2}`;
 
   return db.query(baseQuery, [...queryParams, limit, offset]).then((result) => {
+    console.log(result.rows);
     if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Page not found" });
     }
@@ -68,7 +65,7 @@ exports.updateArticleVotes = (articleId, votes) => {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
   return exports
-    .selectArticles(articleId)
+    .selectArticle(articleId)
     .then(() => {
       return db.query(
         `UPDATE articles SET votes = votes+$1 WHERE article_id = $2 RETURNING *`,
@@ -119,7 +116,7 @@ exports.removeArticle = (articleId) => {
   }
 
   return exports
-    .selectArticles(articleId)
+    .selectArticle(articleId)
     .then(() => {
       return db.query(
         `
