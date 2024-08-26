@@ -89,7 +89,9 @@
           "author": "news_man",
           "body": "What an interesting read!",
           "article_id": 1
-        }
+        },
+        { "limit": "limits the number of responses - pagination" },
+        { "p": ["sets the page number - pagination"] }
       ]
     }
   },

@@ -15,6 +15,7 @@
 - **Environment Variables**
 - **Model View Controller**
 - **Hosting**
+- **Pagination**
 
 ## Setup
 
@@ -130,15 +131,51 @@ Responds with a list of users.
 
 #### GET /api/articles?topic=
 
+Allows articles to be filtered the topic value specified in the query. If the query is omitted, the endpoint should respond with all articles.
+
 #### GET /api/articles?sortby=
+
+Allows articles to be sorted by any valid column (defaults to the created_at date).
 
 #### GET /api/articles?order=
 
-Allows articles to be filtered and sorted.
+Allows articles to be ordered by ascending or descending (defaults to descending).
 
 #### GET /api/articles/:articleid (comment count)
 
 Adds a comment count to the response when retrieving a single article.
+
+#### GET /api/users/:username
+
+return a user by username.
+
+#### PATCH /api/comments/:comment_id
+
+update the votes on a comment given the comment's comment_id.
+
+#### POST /api/articles
+
+add a new article.
+
+#### GET /api/articles (pagination)
+
+Accepts the following queries:
+
+> `limit`, which limits the number of responses (defaults to 10). <br> `p`, stands for page and specifies the page at which to start (calculated using limit).<br>
+
+Responds with:<br>
+
+> the articles paginated according to the above inputs.<br> `total_count` property, displaying the total number of articles (this should display the total number of articles with any filters applied, discounting the limit).
+
+#### /api/articles/:article_id/comments (pagination)
+
+Accepts the following queries:
+
+> `limit`, which limits the number of responses (defaults to 10). <br> `p`, stands for page and specifies the page at which to start (calculated using limit).<br>
+
+Responds with:<br>
+
+> the articles paginated according to the above inputs.<br>
 
 ---
 

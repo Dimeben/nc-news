@@ -1,7 +1,7 @@
 const db = require("../db/connection");
 
 exports.selectArticles = (articleId) => {
-  if (!Number.isInteger(Number(articleId))) {
+  if (isNaN(articleId)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
@@ -45,7 +45,6 @@ exports.selectAllArticles = (
   }
 
   const offset = (page - 1) * limit;
-  console.log(queryParams);
 
   baseQuery += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order} LIMIT $${
     queryParams.length + 1
