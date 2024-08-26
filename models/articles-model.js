@@ -112,3 +112,24 @@ exports.createArticle = (author, title, body, topic, article_img_url) => {
       return result.rows[0];
     });
 };
+
+exports.removeArticle = (articleId) => {
+  if (isNaN(articleId)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  return db
+    .query(
+      `
+      DELETE FROM articles
+      WHERE article_id=$1
+      RETURNING article_id;
+    `,
+      [articleId]
+    )
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return null;
+      }
+      return result.rows[0].article_id;
+    });
+};

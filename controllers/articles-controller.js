@@ -4,6 +4,7 @@ const {
   selectAllArticles,
   updateArticleVotes,
   createArticle,
+  removeArticle,
 } = require("../models/articles-model");
 
 const validSortBy = [
@@ -97,6 +98,22 @@ exports.postArticle = (req, res, next) => {
     .then((article) => {
       article.comment_count = Number(article.comment_count);
       res.status(201).send({ article });
+    })
+    .catch((err) => {
+      next(err);
+    });
+};
+
+exports.deleteArticle = (req, res, next) => {
+  const articleId = req.params.article_id;
+  removeArticle(articleId)
+    .then((deletedArticleId) => {
+      if (!deletedArticleId) {
+        return next({ status: 404, msg: "Page not found" });
+      }
+      res.status(200).send({
+        msg: `Article ${deletedArticleId} and related comments deleted`,
+      });
     })
     .catch((err) => {
       next(err);
