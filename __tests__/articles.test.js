@@ -148,6 +148,33 @@ describe("/api/articles/:article_id", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
+  test("204 - DELETE - deletes article and related comments and sends an appropriate status code and message", () => {
+    return request(app)
+      .delete("/api/articles/1")
+      .expect(200)
+      .then((res) => {
+        console.log(res);
+        expect(res.body.msg).toBe("Article 1 and related comments deleted");
+      });
+  });
+
+  test("400 - DELETE - sends an appropriate status and error message when an invalid article_id is passed", () => {
+    return request(app)
+      .delete("/api/articles/im-an-id")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+
+  test("404 - DELETE - sends an appropriate status and error message when a non-existent article_id is used", () => {
+    return request(app)
+      .delete("/api/articles/9999")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
 });
 
 describe("/api/articles", () => {
