@@ -1,28 +1,37 @@
 const db = require("../db/connection");
 const { selectArticles } = require("../models/articles-model");
 
-exports.selectComments = (articleId) => {
-  if (!Number.isInteger(Number(articleId))) {
+exports.selectComments = (articleId, limit = 10, page = 1) => {
+  if (isNaN(articleId)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
+  const offset = (page - 1) * limit;
+
   return db
     .query(
-      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at DESC",
-      [articleId]
+      `SELECT *, COUNT(*) OVER() AS total_count 
+       FROM comments 
+       WHERE article_id = $1 
+       ORDER BY created_at DESC 
+       LIMIT $2 OFFSET $3`,
+      [articleId, limit, offset]
     )
     .then((result) => {
-      const comments = result.rows;
-      if (comments.length === 0) {
+      const total_count =
+        result.rows.length > 0 ? parseInt(result.rows[0].total_count, 10) : 0;
+
+      if (result.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Page not found" });
       }
-      return comments;
+
+      return { comments: result.rows, total_count };
     });
 };
 
 exports.createComments = (articleId, { username, body }) => {
   if (
-    !Number.isInteger(Number(articleId)) ||
+    isNaN(articleId) ||
     typeof username !== "string" ||
     typeof body !== "string"
   ) {
@@ -47,7 +56,7 @@ exports.createComments = (articleId, { username, body }) => {
 };
 
 exports.removeComment = (commentId) => {
-  if (!Number.isInteger(Number(commentId))) {
+  if (isNaN(commentId)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
   return exports
@@ -63,7 +72,7 @@ exports.removeComment = (commentId) => {
 };
 
 exports.updateComment = (commentId, votes) => {
-  if (!Number(commentId) || !Number(votes)) {
+  if (isNaN(commentId) || isNaN(votes)) {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 

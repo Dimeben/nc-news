@@ -7,9 +7,22 @@ const {
 
 exports.getComments = (req, res, next) => {
   const articleId = req.params.article_id;
-  selectComments(articleId)
-    .then((comments) => {
-      res.status(200).send({ comments });
+  const limit =
+    req.query.limit === undefined || req.query.limit === ""
+      ? 10
+      : parseInt(req.query.limit, 10);
+  const page =
+    req.query.p === undefined || req.query.p === ""
+      ? 1
+      : parseInt(req.query.p, 10);
+
+  if (isNaN(limit) || limit <= 0 || isNaN(page) || page <= 0) {
+    return next({ status: 400, msg: "Bad request" });
+  }
+
+  selectComments(articleId, limit, page)
+    .then(({ comments, total_count }) => {
+      res.status(200).send({ comments, total_count });
     })
     .catch((err) => {
       next(err);

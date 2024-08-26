@@ -25,7 +25,7 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(200)
       .then((res) => {
         const comments = res.body.comments;
-        expect(comments).toHaveLength(11);
+        expect(comments).toHaveLength(10);
         expect(Array.isArray(comments)).toBe(true);
         comments.forEach((comment) => {
           expect(comment).toHaveProperty("comment_id", expect.any(Number));
@@ -123,6 +123,107 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send(newComment)
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("200 - GET - will return an array of 10 comment objects when the limit query is used without a value. A total_count property will show how many comment are available in total", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.comments).toHaveLength(10);
+        expect(response.total_count).toBe(11);
+      });
+  });
+  test("200 - GET - will return an array of 5 comment objects when the limit query is used without a value of 5. A total_count property will show how many comment are available in total", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.comments).toHaveLength(5);
+        expect(response.total_count).toBe(11);
+      });
+  });
+  test("200 - GET - (1/3) - will return an array of 5 comment objects, from objects 1 - 5 when p=1 is used. A total_count property will show how many comment are available in total", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=1")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.comments).toHaveLength(5);
+        expect(response.comments[0].comment_id).toBe(5);
+        expect(response.comments[1].comment_id).toBe(2);
+        expect(response.comments[2].comment_id).toBe(18);
+        expect(response.comments[3].comment_id).toBe(13);
+        expect(response.comments[4].comment_id).toBe(7);
+        expect(response.total_count).toBe(11);
+      });
+  });
+  test("200 - GET - (2/3) - will return an array of 5 comment objects, from objects 6 - 10 when p=2 is used. A total_count property will show how many comment are available in total", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=2")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.comments).toHaveLength(5);
+        expect(response.comments[0].comment_id).toBe(8);
+        expect(response.comments[1].comment_id).toBe(6);
+        expect(response.comments[2].comment_id).toBe(12);
+        expect(response.comments[3].comment_id).toBe(3);
+        expect(response.comments[4].comment_id).toBe(4);
+        expect(response.total_count).toBe(11);
+      });
+  });
+  test("200 - GET - (3/3) - will return an array of 3 comment objects, from objects 11 - 13 when p=3 is used. A total_count property will show how many comment are available in total", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=3")
+      .expect(200)
+      .then((res) => {
+        const response = res.body;
+        expect(response.comments).toHaveLength(1);
+        expect(response.comments[0].comment_id).toBe(9);
+        expect(response.total_count).toBe(11);
+      });
+  });
+  test("400 - GET - sends an appropriate status and error message when an invalid limit is passed", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=ABC&p=1")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("400 - GET - sends an appropriate status and error message when an invalid page is passed", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=ABC")
+      .expect(400)
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
+  test("404 - GET - sends an appropriate status and error message when a non-existent page is passed", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=1000")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+  test("404 - GET - sends an appropriate status and error message when a non-existent article id is passed", () => {
+    return request(app)
+      .get("/api/articles/1000/comments?limit=5&p=1")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+  test("400 - GET - sends an appropriate status and error message when an invalid article id is passed", () => {
+    return request(app)
+      .get("/api/articles/im-an-id/comments?limit=5&p=1000")
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");

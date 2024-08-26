@@ -151,7 +151,7 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("/api/articles", () => {
-  test("200 - GET - will return an array of all article objects with the properties of author, title, article_id, topic, votes, article_img_url and created_at in descending order", () => {
+  test("200 - GET - will return an array of the first 10 article objects with the properties of author, title, article_id, topic, votes, article_img_url and created_at in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -173,7 +173,7 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test("200 - GET - will return an array of all article objects with a comment_count property. This will be the total count of comments with this article_id.", () => {
+  test("200 - GET - will return an array of the first 10 article objects with a comment_count property. This will be the total count of comments with this article_id.", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
@@ -193,7 +193,7 @@ describe("/api/articles", () => {
         expect(res.body.msg).toBe("Page not found");
       });
   });
-  test("200 - GET - will return an array of all article objects sorted by a valid query column name and ordered in a valid query order - title/asc", () => {
+  test("200 - GET - will return an array of the first 10 article objects sorted by a valid query column name and ordered in a valid query order - title/asc", () => {
     return request(app)
       .get("/api/articles?sort_by=title&order=asc")
       .expect(200)
@@ -202,7 +202,7 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("title", { ascending: true });
       });
   });
-  test("200 - GET - will return an array of all article objects sorted by a valid query column name and ordered in a valid query order - author/desc", () => {
+  test("200 - GET - will return an array of the first 10 article objects sorted by a valid query column name and ordered in a valid query order - author/desc", () => {
     return request(app)
       .get("/api/articles?sort_by=author&order=desc")
       .expect(200)
@@ -227,7 +227,7 @@ describe("/api/articles", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("200 - GET - will return an array of all article objects which the topic query is omitted", () => {
+  test("200 - GET - will return an array of the first 10 article objects which the topic query is omitted", () => {
     return request(app)
       .get("/api/articles?topic=")
       .expect(200)
@@ -249,7 +249,7 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test("200 - GET - will return an array of all article objects which have a topic property of the passed query", () => {
+  test("200 - GET - will return an array of the first 10 article objects which have a topic property of the passed query", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
       .expect(200)
