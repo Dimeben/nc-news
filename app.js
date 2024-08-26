@@ -13,10 +13,10 @@ app.use(express.json());
 
 app.use("/api", apiRouter);
 
-// Error Handlers
 app.all("/*", (req, res) => {
   res.status(404).send({ msg: "Page not found" });
 });
+
 app.use(psqlErrorHandler);
 app.use(invalidInputErrorHandler);
 app.use(invalidIdErrorHandler);

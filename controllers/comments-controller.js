@@ -32,6 +32,7 @@ exports.getComments = (req, res, next) => {
 exports.postComments = (req, res, next) => {
   const articleId = req.params.article_id;
   const { username, body } = req.body;
+
   createComments(articleId, { username, body })
     .then((comment) => {
       res.status(201).send({ comment });
@@ -40,6 +41,7 @@ exports.postComments = (req, res, next) => {
       next(err);
     });
 };
+
 
 exports.deleteComment = (req, res, next) => {
   const commentId = req.params.comment_id;

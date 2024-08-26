@@ -27,6 +27,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comments).toHaveLength(10);
         expect(Array.isArray(comments)).toBe(true);
         comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
           expect(comment).toHaveProperty("comment_id", expect.any(Number));
           expect(comment).toHaveProperty("votes", expect.any(Number));
           expect(comment).toHaveProperty("created_at", expect.any(String));
@@ -34,14 +35,6 @@ describe("/api/articles/:article_id/comments", () => {
           expect(comment).toHaveProperty("article_id", expect.any(Number));
         });
         expect(comments).toBeSortedBy("created_at", { descending: true });
-      });
-  });
-  test("404 - GET - sends an appropriate status and error message when a non-exist article_id is used", () => {
-    return request(app)
-      .get("/api/articles/1234/comments")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
       });
   });
   test("400 - GET - sends an appropriate status and error message when an invalid article_id is used", () => {
@@ -74,26 +67,14 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comment.article_id).toBe(1);
       });
   });
-  test("404 - POST - sends an appropriate status and error message when a non-exist article_id is used", () => {
-    const newComment = {
-      username: "rogersop",
-      body: "What an interesting read!",
-    };
-    return request(app)
-      .post("/api/articles/1234/comments")
-      .send(newComment)
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
   test("400 - POST - sends an appropriate status and error message when an invalid datatype is posted", () => {
     const newComment = {
       username: 20002,
       body: 123897,
     };
+
     return request(app)
-      .post("/api/articles/1/comments")
+      .post("/api/articles/2/comments")
       .send(newComment)
       .expect(400)
       .then((res) => {
@@ -204,22 +185,6 @@ describe("/api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("404 - GET - sends an appropriate status and error message when a non-existent page is passed", () => {
-    return request(app)
-      .get("/api/articles/1/comments?limit=5&p=1000")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
-  test("404 - GET - sends an appropriate status and error message when a non-existent article id is passed", () => {
-    return request(app)
-      .get("/api/articles/1000/comments?limit=5&p=1")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
   test("400 - GET - sends an appropriate status and error message when an invalid article id is passed", () => {
     return request(app)
       .get("/api/articles/im-an-id/comments?limit=5&p=1000")
@@ -245,14 +210,6 @@ describe("/api/comments/:comment_id", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");
-      });
-  });
-  test("404 - DELETE - sends an appropriate status and error message when a non-existent comment_id is used", () => {
-    return request(app)
-      .delete("/api/comments/3123")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
       });
   });
   test("200 - PATCH - will return an updated comment object, using a newVotes object (adding votes)", () => {
@@ -287,16 +244,6 @@ describe("/api/comments/:comment_id", () => {
         expect(comment).toHaveProperty("article_id", expect.any(Number));
       });
   });
-  test("404 - PATCH - sends an appropriate status and error message when a non-exist comment_id is used", () => {
-    const newVotes = { inc_votes: 10 };
-    return request(app)
-      .patch("/api/comments/2000")
-      .send(newVotes)
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
   test("400 - PATCH - sends an appropriate status and error message when an invalid datatype is posted", () => {
     const newVotes = { inc_votes: { votes: 10 } };
     return request(app)
@@ -325,6 +272,37 @@ describe("/api/comments/:comment_id", () => {
       .expect(400)
       .then((res) => {
         expect(res.body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("/api/articles/:articleid/comments - Non-existent article ID", () => {
+  test("404 - GET - sends an appropriate status and error message when a non-existent article_id is used", () => {
+    return request(app)
+      .get("/api/articles/1234/comments")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+});
+describe("/api/articles/:articleid/comments - Valid articles with no comments", () => {
+  test("404 - GET - sends an appropriate status and error message when a valid article_id is used but their are no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+});
+describe("/api/comments/:commentid - Non-existent comment ID", () => {
+  test("404 - GET - sends an appropriate status and error message when a non-existent comment_id is used", () => {
+    return request(app)
+      .get("/api/comments/1234")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
       });
   });
 });

@@ -47,7 +47,6 @@ exports.selectAllArticles = (
   } OFFSET $${queryParams.length + 2}`;
 
   return db.query(baseQuery, [...queryParams, limit, offset]).then((result) => {
-    console.log(result.rows);
     if (result.rows.length === 0) {
       return Promise.reject({ status: 404, msg: "Page not found" });
     }
@@ -61,9 +60,7 @@ exports.selectAllArticles = (
 };
 
 exports.updateArticleVotes = (articleId, votes) => {
-  if (typeof articleId !== "number" || typeof votes !== "number") {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
+
   return exports
     .selectArticle(articleId)
     .then(() => {
@@ -96,7 +93,7 @@ exports.createArticle = (author, title, body, topic, article_img_url) => {
 
       return db.query(
         `
-        SELECT articles.*, COALESCE(COUNT(comments.article_id), 0) AS comment_count
+        SELECT articles.*, COALESCE(COUNT(comments.article_id), 0):: INT AS comment_count
         FROM articles
         LEFT JOIN comments ON articles.article_id = comments.article_id
         WHERE articles.article_id = $1
@@ -111,9 +108,6 @@ exports.createArticle = (author, title, body, topic, article_img_url) => {
 };
 
 exports.removeArticle = (articleId) => {
-  if (isNaN(articleId)) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
 
   return exports
     .selectArticle(articleId)

@@ -2,10 +2,6 @@ const db = require("../db/connection");
 const { selectArticle } = require("../models/articles-model");
 
 exports.selectComments = (articleId, limit = 10, page = 1) => {
-  if (isNaN(articleId)) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
-
   const offset = (page - 1) * limit;
 
   return db
@@ -20,7 +16,7 @@ exports.selectComments = (articleId, limit = 10, page = 1) => {
     .then((result) => {
       const total_count =
         result.rows.length > 0 ? parseInt(result.rows[0].total_count, 10) : 0;
-
+      console.log(result.rows);
       if (result.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Page not found" });
       }
@@ -56,9 +52,6 @@ exports.createComments = (articleId, { username, body }) => {
 };
 
 exports.removeComment = (commentId) => {
-  if (isNaN(commentId)) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
   return exports
     .selectComments(commentId)
     .then(() => {
@@ -72,10 +65,6 @@ exports.removeComment = (commentId) => {
 };
 
 exports.updateComment = (commentId, votes) => {
-  if (isNaN(commentId) || isNaN(votes)) {
-    return Promise.reject({ status: 400, msg: "Bad request" });
-  }
-
   return exports
     .selectComments(commentId)
     .then(() => {

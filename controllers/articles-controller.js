@@ -72,6 +72,9 @@ exports.getAllArticles = (req, res, next) => {
 exports.patchArticleVotes = (req, res, next) => {
   const articleId = Number(req.params.article_id);
   const votes = req.body.inc_votes;
+  if (typeof votes !== "number") {
+    return next({ status: 400, msg: "Bad request" });
+  }
   updateArticleVotes(articleId, votes)
     .then((article) => {
       res.status(200).send({ article });
