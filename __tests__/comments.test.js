@@ -37,7 +37,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test("200 - GET - sends empty array when a valid article_id is used but their are no comments", () => {
+  test("200 - GET - sends empty array when a valid article_id is used but there are no comments", () => {
     return request(app)
       .get("/api/articles/2/comments")
       .expect(200)
@@ -90,9 +90,9 @@ describe("/api/articles/:article_id/comments", () => {
         expect(res.body.msg).toBe("Bad request");
       });
   });
-  test("400 - POST - sends an appropriate status and error message when an invalid comment object is posted", () => {
+  test("400 - POST - sends an appropriate status and error message when an comment object with too many properties is posted", () => {
     const newComment = {
-      name: 123,
+      name: "rogersop",
       comment: "What an interesting read!",
       votes: 100005,
     };

@@ -40,9 +40,7 @@ exports.getAllArticles = (req, res, next) => {
   let limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
   let page = req.query.p ? parseInt(req.query.p, 10) : 1;
 
-  if (
-    !validSortBy.includes(sortBy) ||
-    !validOrder.includes(order)) {
+  if (!validSortBy.includes(sortBy) || !validOrder.includes(order)) {
     return next({ status: 400, msg: "Bad request" });
   }
 
@@ -61,7 +59,7 @@ exports.getAllArticles = (req, res, next) => {
 };
 
 exports.patchArticleVotes = (req, res, next) => {
-  const articleId = Number(req.params.article_id);
+  const articleId = req.params.article_id;
   const votes = req.body.inc_votes;
 
   updateArticleVotes(articleId, votes)
@@ -87,9 +85,9 @@ exports.postArticle = (req, res, next) => {
 };
 
 exports.deleteArticle = (req, res, next) => {
-  const articleId = req.params.article_id;
+  const article_Id = req.params.article_id;
 
-  removeArticle(articleId)
+  removeArticle(article_Id)
     .then(() => {
       res.status(204).end();
     })

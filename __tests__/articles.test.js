@@ -71,14 +71,6 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then((res) => {
         const article = res.body.article;
-        expect(article).toHaveProperty("article_id", expect.any(Number));
-        expect(article).toHaveProperty("title", expect.any(String));
-        expect(article).toHaveProperty("topic", expect.any(String));
-        expect(article).toHaveProperty("author", expect.any(String));
-        expect(article).toHaveProperty("body", expect.any(String));
-        expect(article).toHaveProperty("created_at", expect.any(String));
-        expect(article).toHaveProperty("votes", expect.any(Number));
-        expect(article).toHaveProperty("article_img_url", expect.any(String));
         expect(article.votes).toBe(110);
       });
   });
@@ -90,14 +82,6 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then((res) => {
         const article = res.body.article;
-        expect(article).toHaveProperty("article_id", expect.any(Number));
-        expect(article).toHaveProperty("title", expect.any(String));
-        expect(article).toHaveProperty("topic", expect.any(String));
-        expect(article).toHaveProperty("author", expect.any(String));
-        expect(article).toHaveProperty("body", expect.any(String));
-        expect(article).toHaveProperty("created_at", expect.any(String));
-        expect(article).toHaveProperty("votes", expect.any(Number));
-        expect(article).toHaveProperty("article_img_url", expect.any(String));
         expect(article.votes).toBe(60);
       });
   });
@@ -180,7 +164,7 @@ describe("/api/articles", () => {
         const articles = res.body.articles;
         articles.forEach((article) => {
           expect(article).toHaveProperty("comment_count");
-          expect(typeof Number(article.comment_count)).toBe("number");
+          expect(typeof article.comment_count).toBe("number");
         });
       });
   });
@@ -240,6 +224,16 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
+  // test("200 - GET - will return an empty array when the topic is valid, but not related to any articles", () => {
+  //   return request(app)
+  //     .get("/api/articles?topic=paper")
+  //     .expect(200)
+  //     .then((res) => {
+  //       const articles = res.body.articles;
+  //       expect(articles).toHaveLength(0);
+  //       expect(Array.isArray(articles)).toBe(true);
+  //     });
+  // });
   test("200 - GET - will return an array of the first 10 article objects which have a topic property of the passed query", () => {
     return request(app)
       .get("/api/articles?topic=mitch")

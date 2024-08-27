@@ -13,3 +13,23 @@ exports.checkExists = (table_name, column_name, value) => {
     }
   });
 };
+
+exports.checkValidColumns = (table_name, column_name) => {
+  const columnQueryStr = format(
+    `SELECT column_name
+    FROM information_schema.columns
+    WHERE table_schema = 'public'
+      AND table_name = '%I'
+      AND column_name = '%I';`,
+    table_name,
+    column_name
+  );
+
+  return db.query(columnQueryStr).then((result) => {
+    console.log(result);
+    const validColumns = result.rows.map((row) => row.column_name);
+    if (!validColumns.includes(column_name)) {
+      return Promise.reject({ status: 400, msg: "Bad request" });
+    }
+  });
+};

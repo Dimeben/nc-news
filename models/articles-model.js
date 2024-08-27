@@ -1,5 +1,5 @@
 const db = require("../db/connection");
-const { checkExists } = require("../utils/utils");
+const { checkExists, checkValidColumns } = require("../utils/utils");
 
 exports.selectArticle = (articleId) => {
   let queryStr = `SELECT articles.*, 

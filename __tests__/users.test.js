@@ -18,7 +18,7 @@ afterAll(() => {
 });
 
 describe("/api/users", () => {
-  test("200 - GET - will return an article object with the given article_id, with the properties of author, title, article_id, body, topic, created_at, votes and article_img_url", () => {
+  test("200 - GET - will return all user objects with the properties of username, name and avatar_url ", () => {
     return request(app)
       .get("/api/users")
       .expect(200)
