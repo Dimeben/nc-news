@@ -1,79 +1,63 @@
 const db = require("../db/connection");
-const { selectArticle } = require("../models/articles-model");
+const { checkExists } = require("../utils/utils");
 
 exports.selectComments = (articleId, limit = 10, page = 1) => {
   const offset = (page - 1) * limit;
 
-  return db
-    .query(
-      `SELECT *, COUNT(*) OVER() AS total_count 
-       FROM comments 
-       WHERE article_id = $1 
-       ORDER BY created_at DESC 
-       LIMIT $2 OFFSET $3`,
-      [articleId, limit, offset]
-    )
-    .then((result) => {
-      const total_count =
-        result.rows.length > 0 ? parseInt(result.rows[0].total_count, 10) : 0;
-      console.log(result.rows);
-      if (result.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Page not found" });
-      }
+  const checkArticleExists = checkExists("articles", "article_id", articleId);
+  const fetchComments = db.query(
+    `SELECT *, COUNT(*) OVER() AS total_count 
+     FROM comments 
+     WHERE article_id = $1 
+     ORDER BY created_at DESC 
+     LIMIT $2 OFFSET $3`,
+    [articleId, limit, offset]
+  );
 
-      return { comments: result.rows, total_count };
-    });
+  return Promise.all([checkArticleExists, fetchComments]).then((results) => {
+    const commentsResult = results[1];
+    const total_count =
+      commentsResult.rows.length > 0
+        ? parseInt(commentsResult.rows[0].total_count, 10)
+        : 0;
+    return { comments: commentsResult.rows, total_count };
+  });
 };
 
 exports.createComments = (articleId, { username, body }) => {
-  return selectArticle(articleId)
-    .then(() => {
-      return db.query(
-        `
-        INSERT INTO comments (article_id, author, body)
-        VALUES ($1, $2, $3)
-        RETURNING *;
-      `,
-        [articleId, username, body]
-      );
-    })
-    .then((result) => {
-      console.log(result, "<--------- Model");
-      if (!result) {
-        return Promise.reject({ status: 400, msg: "Bad request" });
-      }
-      const comment = result.rows[0];
-      return comment;
-    });
+  let queryStr = `INSERT INTO comments (article_id, author, body) VALUES ($1, $2, $3)
+        RETURNING *`;
+  const queryValues = [articleId, username, body];
+
+  const checkArticleExists = checkExists("articles", "article_id", articleId);
+  const makeComment = db.query(queryStr, queryValues);
+
+  return Promise.all([checkArticleExists, makeComment]).then((result) => {
+    return result[1].rows[0];
+  });
 };
 
 exports.removeComment = (commentId) => {
-  return exports
-    .selectComments(commentId)
-    .then(() => {
-      return db.query(`DELETE FROM comments WHERE comment_id = $1`, [
-        commentId,
-      ]);
-    })
-    .then(() => {
-      return;
-    });
+  let queryStr = `DELETE FROM comments WHERE comment_id = $1`;
+  const queryValues = [commentId];
+
+  const checkCommentExists = checkExists("comments", "comment_id", commentId);
+  const deleteComment = db.query(queryStr, queryValues);
+
+  return Promise.all([checkCommentExists, deleteComment]).then((result) => {
+    return;
+  });
 };
 
 exports.updateComment = (commentId, votes) => {
-  return exports
-    .selectComments(commentId)
-    .then(() => {
-      return db.query(
-        `UPDATE comments SET votes = votes+$1 WHERE comment_id = $2 RETURNING *`,
-        [votes, commentId]
-      );
-    })
-    .then((result) => {
-      const comment = result.rows[0];
-      if (!comment) {
-        return Promise.reject({ status: 404, msg: "Page not found" });
-      }
-      return comment;
-    });
+  let queryStr = `UPDATE comments SET votes = votes+$1 WHERE comment_id = $2 RETURNING *`;
+  const queryValues = [votes, commentId];
+
+  const checkCommentExists = checkExists("comments", "comment_id", commentId);
+  const updateVotes = db.query(queryStr, queryValues);
+
+  return Promise.all([checkCommentExists, updateVotes]).then((result) => {
+    const comment = result[1].rows[0];
+    return comment;
+  });
 };

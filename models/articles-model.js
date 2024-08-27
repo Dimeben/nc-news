@@ -1,24 +1,22 @@
 const db = require("../db/connection");
+const { checkExists } = require("../utils/utils");
 
 exports.selectArticle = (articleId) => {
-  return db
-    .query(
-      `SELECT articles.*, 
+  let queryStr = `SELECT articles.*, 
        COALESCE(COUNT(comments.article_id), 0) AS comment_count 
        FROM articles
        LEFT JOIN comments ON articles.article_id = comments.article_id
        WHERE articles.article_id = $1
-       GROUP BY articles.article_id;
-    `,
-      [articleId]
-    )
-    .then((result) => {
-      const article = result.rows[0];
-      if (!article) {
-        return Promise.reject({ status: 404, msg: "Page not found" });
-      }
-      return article;
-    });
+       GROUP BY articles.article_id;`;
+  const queryValues = [articleId];
+
+  const checkArticleExists = checkExists("articles", "article_id", articleId);
+  const deleteArticle = db.query(queryStr, queryValues);
+
+  return Promise.all([checkArticleExists, deleteArticle]).then((result) => {
+    const article = result[1].rows[0];
+    return article;
+  });
 };
 
 exports.selectAllArticles = (
@@ -60,23 +58,19 @@ exports.selectAllArticles = (
 };
 
 exports.updateArticleVotes = (articleId, votes) => {
-  return exports
-    .selectArticle(articleId)
-    .then(() => {
-      return db.query(
-        `UPDATE articles SET votes = votes+$1 WHERE article_id = $2 RETURNING *`,
-        [votes, articleId]
-      );
-    })
-    .then((result) => {
-      const article = result.rows[0];
-      if (!article) {
-        return Promise.reject({ status: 404, msg: "Page not found" });
-      }
-      return article;
-    });
+  let queryStr = `UPDATE articles SET votes = votes+$1 WHERE article_id = $2 RETURNING *`;
+  const queryValues = [votes, articleId];
+
+  const checkArticleExists = checkExists("articles", "article_id", articleId);
+  const updateVotes = db.query(queryStr, queryValues);
+
+  return Promise.all([checkArticleExists, updateVotes]).then((result) => {
+    const comment = result[1].rows[0];
+    return comment;
+  });
 };
 
+//Can you do Promise.all when the second query depends on the newly created articleId?
 exports.createArticle = (author, title, body, topic, article_img_url) => {
   return db
     .query(
@@ -107,21 +101,13 @@ exports.createArticle = (author, title, body, topic, article_img_url) => {
 };
 
 exports.removeArticle = (articleId) => {
-  return exports
-    .selectArticle(articleId)
-    .then(() => {
-      return db.query(
-        `
-        DELETE FROM articles
-        WHERE article_id=$1
-      `,
-        [articleId]
-      );
-    })
-    .then((result) => {
-      if (result.rowCount === 0) {
-        return Promise.reject({ status: 404, msg: "Page not found" });
-      }
-      return;
-    });
+  let queryStr = `DELETE FROM articles WHERE article_id=$1`;
+  const queryValues = [articleId];
+
+  const checkArticleExists = checkExists("articles", "article_id", articleId);
+  const deleteArticle = db.query(queryStr, queryValues);
+
+  return Promise.all([checkArticleExists, deleteArticle]).then((result) => {
+    return;
+  });
 };

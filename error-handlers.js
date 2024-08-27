@@ -16,6 +16,7 @@ exports.invalidInputErrorHandler = (err, req, res, next) => {
 
 exports.invalidIdErrorHandler = (err, req, res, next) => {
   if (err.code === "23503") {
+    console.log(err.detail);
     res.status(404).send({ msg: "Page not found" });
   } else {
     next(err);

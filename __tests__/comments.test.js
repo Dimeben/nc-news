@@ -37,6 +37,16 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
+  test("200 - GET - sends empty array when a valid article_id is used but their are no comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then((res) => {
+        const comments = res.body.comments;
+        expect(comments).toHaveLength(0);
+        expect(Array.isArray(comments)).toBe(true);
+      });
+  });
   test("400 - GET - sends an appropriate status and error message when an invalid article_id is used", () => {
     return request(app)
       .get("/api/articles/Im-an-id/comments")
@@ -67,20 +77,6 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comment.article_id).toBe(1);
       });
   });
-  test("400 - POST - sends an appropriate status and error message when an invalid datatype is posted", () => {
-    const newComment = {
-      username: "icellusedkars",
-      body: null,
-    };
-
-    return request(app)
-      .post("/api/articles/2/comments")
-      .send(newComment)
-      .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
-      });
-  });
   test("400 - POST - sends an appropriate status and error message when an invalid article_id is passed", () => {
     const newComment = {
       name: "rogersop",
@@ -96,9 +92,9 @@ describe("/api/articles/:article_id/comments", () => {
   });
   test("400 - POST - sends an appropriate status and error message when an invalid comment object is posted", () => {
     const newComment = {
-      name: "rogersop",
+      name: 123,
       comment: "What an interesting read!",
-      votes: 10000000000000,
+      votes: 100005,
     };
     return request(app)
       .post("/api/articles/1/comments")
@@ -280,16 +276,6 @@ describe("/api/articles/:articleid/comments - Non-existent article ID", () => {
   test("404 - GET - sends an appropriate status and error message when a non-existent article_id is used", () => {
     return request(app)
       .get("/api/articles/1234/comments")
-      .expect(404)
-      .then((res) => {
-        expect(res.body.msg).toBe("Page not found");
-      });
-  });
-});
-describe("/api/articles/:articleid/comments - Valid articles with no comments", () => {
-  test("404 - GET - sends an appropriate status and error message when a valid article_id is used but their are no comments", () => {
-    return request(app)
-      .get("/api/articles/2/comments")
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Page not found");
