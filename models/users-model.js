@@ -1,4 +1,5 @@
 const db = require("../db/connection");
+const { checkExists } = require("../utils/utils");
 
 exports.selectUsers = () => {
   return db.query(`SELECT * FROM users`).then((users) => {
@@ -7,12 +8,14 @@ exports.selectUsers = () => {
 };
 
 exports.selectUsername = (username) => {
-  return db
-    .query(`SELECT * FROM users WHERE users.username=$1`, [username])
-    .then((user) => {
-      if (user.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Page not found" });
-      }
-      return user.rows[0];
-    });
+  let queryStr = `SELECT * FROM users WHERE users.username=$1`;
+  const queryValues = [username];
+
+  const checkUserExists = checkExists("users", "username", username);
+  const getUsers = db.query(queryStr, queryValues);
+
+  return Promise.all([checkUserExists, getUsers]).then((result) => {
+    const user = result[1].rows[0];
+    return user;
+  });
 };
