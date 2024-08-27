@@ -17,7 +17,6 @@ const validSortBy = [
   "comment_count",
 ];
 const validOrder = ["ASC", "DESC"];
-const validTopic = ["mitch", "cats", "paper", "all"];
 
 exports.getArticle = (req, res, next) => {
   const articleId = req.params.article_id;
@@ -43,9 +42,7 @@ exports.getAllArticles = (req, res, next) => {
 
   if (
     !validSortBy.includes(sortBy) ||
-    !validOrder.includes(order) ||
-    !validTopic.includes(topic)
-  ) {
+    !validOrder.includes(order)) {
     return next({ status: 400, msg: "Bad request" });
   }
 

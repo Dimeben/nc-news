@@ -253,14 +253,6 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("400 - GET - sends an appropriate status and error message when an invalid topic is passed", () => {
-    return request(app)
-      .get("/api/articles?topic=banana123")
-      .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
-      });
-  });
   test("200 - GET - will return an array of 10 article objects when the limit query is used without a value. A total_count property will show how many articles are available in total", () => {
     return request(app)
       .get("/api/articles?limit=")
@@ -394,6 +386,16 @@ describe("/api/articles/:article_id - Non-existent article ID", () => {
   test("404 - GET - sends an appropriate status and error message when a non-exist article_id is used", () => {
     return request(app)
       .get("/api/articles/1234")
+      .expect(404)
+      .then((res) => {
+        expect(res.body.msg).toBe("Page not found");
+      });
+  });
+});
+describe("/api/articles?topic - Non-existent topic name", () => {
+  test("404 - GET - sends an appropriate status and error message when an invalid topic is passed", () => {
+    return request(app)
+      .get("/api/articles?topic=banana123")
       .expect(404)
       .then((res) => {
         expect(res.body.msg).toBe("Page not found");
