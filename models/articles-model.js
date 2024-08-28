@@ -19,13 +19,9 @@ exports.selectArticle = (articleId) => {
   });
 };
 
-exports.selectAllArticles = (
-  sortBy = "created_at",
-  order = "DESC",
-  topic = "all",
-  limit = 10,
-  page = 1
-) => {
+exports.selectAllArticles = (sortBy, order, topic, limit, page) => {
+  const promsArray = [];
+
   let baseQuery = `
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
     COALESCE(COUNT(comments.article_id), 0):: INT AS comment_count
@@ -33,28 +29,45 @@ exports.selectAllArticles = (
     LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
   const queryParams = [];
-  if (topic !== "all") {
-    baseQuery += ` WHERE articles.topic = $1`;
+  const whereClauses = [];
+
+  if (topic) {
+    whereClauses.push(`articles.topic = $${queryParams.length + 1}`);
     queryParams.push(topic);
+    promsArray.push(checkExists("topics", "slug", topic));
+  }
+
+  if (whereClauses.length > 0) {
+    baseQuery += ` WHERE ${whereClauses.join(" AND ")}`;
   }
 
   const offset = (page - 1) * limit;
+  queryParams.push(limit, offset);
 
   baseQuery += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order} LIMIT $${
-    queryParams.length + 1
-  } OFFSET $${queryParams.length + 2}`;
+    queryParams.length - 1
+  } OFFSET $${queryParams.length}`;
 
-  return db.query(baseQuery, [...queryParams, limit, offset]).then((result) => {
-    if (result.rows.length === 0) {
-      return Promise.reject({ status: 404, msg: "Page not found" });
-    }
-    return db
-      .query(`SELECT COUNT(*) AS total_count FROM articles`)
-      .then((countResult) => {
+  promsArray.push(checkValidColumns("articles", sortBy));
+  promsArray.push(db.query(baseQuery, queryParams));
+
+  return Promise.all(promsArray).then(
+    ([promResultOne, promResultTwo, promResultThree]) => {
+      const totalQuery = `
+      SELECT COUNT(*) AS total_count
+      FROM articles
+      ${topic ? `WHERE articles.topic = $1` : ""}`;
+
+      return db.query(totalQuery, topic ? [topic] : []).then((countResult) => {
         const total_count = parseInt(countResult.rows[0].total_count, 10);
-        return { articles: result.rows, total_count };
+        if (!promResultTwo) {
+          return { articles: promResultThree.rows, total_count };
+        } else {
+          return { articles: promResultTwo.rows, total_count };
+        }
       });
-  });
+    }
+  );
 };
 
 exports.updateArticleVotes = (articleId, votes) => {
@@ -70,7 +83,6 @@ exports.updateArticleVotes = (articleId, votes) => {
   });
 };
 
-//Can you do Promise.all when the second query depends on the newly created articleId?
 exports.createArticle = (author, title, body, topic, article_img_url) => {
   return db
     .query(
@@ -83,31 +95,20 @@ exports.createArticle = (author, title, body, topic, article_img_url) => {
     )
     .then((result) => {
       const article = result.rows[0];
-
-      return db.query(
-        `
-        SELECT articles.*, COALESCE(COUNT(comments.article_id), 0):: INT AS comment_count
-        FROM articles
-        LEFT JOIN comments ON articles.article_id = comments.article_id
-        WHERE articles.article_id = $1
-        GROUP BY articles.article_id;
-      `,
-        [article.article_id]
-      );
-    })
-    .then((result) => {
-      return result.rows[0];
+      return article;
     });
 };
 
 exports.removeArticle = (articleId) => {
-  let queryStr = `DELETE FROM articles WHERE article_id=$1`;
+  let queryStr = `DELETE FROM articles WHERE article_id=$1 RETURNING *`;
   const queryValues = [articleId];
 
-  const checkArticleExists = checkExists("articles", "article_id", articleId);
   const deleteArticle = db.query(queryStr, queryValues);
 
-  return Promise.all([checkArticleExists, deleteArticle]).then((result) => {
+  return Promise.all([deleteArticle]).then((result) => {
+    if (result[0].rows.length === 0) {
+      return Promise.reject({ status: 404, msg: "Page not found" });
+    }
     return;
   });
 };

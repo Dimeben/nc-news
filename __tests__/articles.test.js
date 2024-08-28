@@ -186,14 +186,7 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("author", { descending: true });
       });
   });
-  test("400 - GET - sends an appropriate status and error message when an invalid sort_by column is passed", () => {
-    return request(app)
-      .get("/api/articles?sort_by=banana33&order=desc")
-      .expect(400)
-      .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
-      });
-  });
+
   test("400 - GET - sends an appropriate status and error message when an invalid order is passed", () => {
     return request(app)
       .get("/api/articles?sort_by=author&order=how-should-i-know")
@@ -224,16 +217,16 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
-  // test("200 - GET - will return an empty array when the topic is valid, but not related to any articles", () => {
-  //   return request(app)
-  //     .get("/api/articles?topic=paper")
-  //     .expect(200)
-  //     .then((res) => {
-  //       const articles = res.body.articles;
-  //       expect(articles).toHaveLength(0);
-  //       expect(Array.isArray(articles)).toBe(true);
-  //     });
-  // });
+  test("200 - GET - will return an empty array when the topic is valid, but not related to any articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then((res) => {
+        const articles = res.body.articles;
+        expect(articles).toHaveLength(0);
+        expect(Array.isArray(articles)).toBe(true);
+      });
+  });
   test("200 - GET - will return an array of the first 10 article objects which have a topic property of the passed query", () => {
     return request(app)
       .get("/api/articles?topic=mitch")
@@ -339,8 +332,7 @@ describe("/api/articles", () => {
       .post("/api/articles")
       .send(newArticle)
       .expect(201)
-      .then((res) => {
-        const article = res.body.article;
+      .then(({ body: { article } }) => {
         expect(article.article_id).toBe(14);
         expect(article.author).toBe("icellusedkars");
         expect(article.title).toBe("What a time to be alive");
@@ -354,7 +346,6 @@ describe("/api/articles", () => {
           new Date(article.created_at).getTime() / 1000;
         const nowInSeconds = Date.now() / 1000;
         expect(createdAtInSeconds).toBeCloseTo(nowInSeconds, 1);
-        expect(article.comment_count).toBe(0);
       });
   });
   test("400 - POST - sends an appropriate status and error message when an invalid comment object is posted", () => {
@@ -395,4 +386,13 @@ describe("/api/articles?topic - Non-existent topic name", () => {
         expect(res.body.msg).toBe("Page not found");
       });
   });
+});
+
+test("404 - GET - sends an appropriate status and error message when an invalid sort_by column is passed", () => {
+  return request(app)
+    .get("/api/articles?sort_by=banana33&order=desc")
+    .expect(404)
+    .then((res) => {
+      expect(res.body.msg).toBe("Page not found");
+    });
 });

@@ -1,4 +1,3 @@
-const { sort } = require("../db/data/test-data/articles");
 const {
   selectArticle,
   selectAllArticles,
@@ -7,25 +6,11 @@ const {
   removeArticle,
 } = require("../models/articles-model");
 
-const validSortBy = [
-  "author",
-  "title",
-  "article_id",
-  "topic",
-  "created_at",
-  "votes",
-  "comment_count",
-];
-const validOrder = ["ASC", "DESC"];
-
 exports.getArticle = (req, res, next) => {
   const articleId = req.params.article_id;
   selectArticle(articleId)
     .then((article) => {
-      article.article_id = +article.article_id;
-      article.votes = +article.votes;
       article.comment_count = +article.comment_count;
-
       res.status(200).send({ article });
     })
     .catch((err) => {
@@ -34,23 +19,14 @@ exports.getArticle = (req, res, next) => {
 };
 
 exports.getAllArticles = (req, res, next) => {
-  let topic = req.query.topic ? req.query.topic : "all";
+  let topic = req.query.topic ? req.query.topic : null;
   let sortBy = req.query.sort_by ? req.query.sort_by : "created_at";
   let order = req.query.order ? req.query.order.toUpperCase() : "DESC";
   let limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
   let page = req.query.p ? parseInt(req.query.p, 10) : 1;
 
-  if (!validSortBy.includes(sortBy) || !validOrder.includes(order)) {
-    return next({ status: 400, msg: "Bad request" });
-  }
-
   selectAllArticles(sortBy, order, topic, limit, page)
     .then(({ articles, total_count }) => {
-      articles.forEach((article) => {
-        article.article_id = +article.article_id;
-        article.votes = +article.votes;
-        article.comment_count = +article.comment_count;
-      });
       res.status(200).send({ articles, total_count });
     })
     .catch((err) => {
