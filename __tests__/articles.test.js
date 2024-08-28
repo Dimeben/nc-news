@@ -23,7 +23,7 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then((res) => {
-        const article = res.body.article;
+        const { article } = res.body;
         expect(article.article_id).toBe(1);
         expect(article.title).toBe("Living in the shadow of a great man");
         expect(article.topic).toBe("mitch");
@@ -41,17 +41,7 @@ describe("/api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then((res) => {
-        const article = res.body.article;
-        expect(article.article_id).toBe(1);
-        expect(article.title).toBe("Living in the shadow of a great man");
-        expect(article.topic).toBe("mitch");
-        expect(article.author).toBe("butter_bridge");
-        expect(article.body).toBe("I find this existence challenging");
-        expect(article).toHaveProperty("created_at", expect.any(String));
-        expect(article.votes).toBe(100);
-        expect(article.article_img_url).toBe(
-          "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
-        );
+        const { article } = res.body;
         expect(article).toHaveProperty("comment_count", expect.any(Number));
       });
   });
@@ -70,7 +60,7 @@ describe("/api/articles/:article_id", () => {
       .send(newVotes)
       .expect(200)
       .then((res) => {
-        const article = res.body.article;
+        const { article } = res.body;
         expect(article.votes).toBe(110);
       });
   });
@@ -81,7 +71,7 @@ describe("/api/articles/:article_id", () => {
       .send(newVotes)
       .expect(200)
       .then((res) => {
-        const article = res.body.article;
+        const { article } = res.body;
         expect(article.votes).toBe(60);
       });
   });
@@ -139,7 +129,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((res) => {
-        const articles = res.body.articles;
+        const { articles } = res.body;
         expect(articles).toHaveLength(10);
         expect(Array.isArray(articles)).toBe(true);
         articles.forEach((article) => {
@@ -161,7 +151,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then((res) => {
-        const articles = res.body.articles;
+        const { articles } = res.body;
         articles.forEach((article) => {
           expect(article).toHaveProperty("comment_count");
           expect(typeof article.comment_count).toBe("number");
@@ -173,7 +163,7 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=title&order=asc")
       .expect(200)
       .then((res) => {
-        const articles = res.body.articles;
+        const { articles } = res.body;
         expect(articles).toBeSortedBy("title", { ascending: true });
       });
   });
@@ -182,7 +172,7 @@ describe("/api/articles", () => {
       .get("/api/articles?sort_by=author&order=desc")
       .expect(200)
       .then((res) => {
-        const articles = res.body.articles;
+        const { articles } = res.body;
         expect(articles).toBeSortedBy("author", { descending: true });
       });
   });
@@ -200,7 +190,7 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=")
       .expect(200)
       .then((res) => {
-        const articles = res.body.articles;
+        const { articles } = res.body;
         expect(articles).toHaveLength(10);
         expect(Array.isArray(articles)).toBe(true);
         articles.forEach((article) => {
@@ -222,7 +212,7 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=paper")
       .expect(200)
       .then((res) => {
-        const articles = res.body.articles;
+        const { articles } = res.body;
         expect(articles).toHaveLength(0);
         expect(Array.isArray(articles)).toBe(true);
       });
@@ -232,7 +222,7 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=mitch")
       .expect(200)
       .then((res) => {
-        const articles = res.body.articles;
+        const { articles } = res.body;
         expect(articles).toHaveLength(10);
         expect(Array.isArray(articles)).toBe(true);
         articles.forEach((article) => {
