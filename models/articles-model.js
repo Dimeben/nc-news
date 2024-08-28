@@ -29,16 +29,11 @@ exports.selectAllArticles = (sortBy, order, topic, limit, page) => {
     LEFT JOIN comments ON articles.article_id = comments.article_id`;
 
   const queryParams = [];
-  const whereClauses = [];
 
   if (topic) {
-    whereClauses.push(`articles.topic = $${queryParams.length + 1}`);
+    baseQuery += ` WHERE articles.topic = $${queryParams.length + 1} `;
     queryParams.push(topic);
     promsArray.push(checkExists("topics", "slug", topic));
-  }
-
-  if (whereClauses.length > 0) {
-    baseQuery += ` WHERE ${whereClauses.join(" AND ")}`;
   }
 
   const offset = (page - 1) * limit;
@@ -47,7 +42,7 @@ exports.selectAllArticles = (sortBy, order, topic, limit, page) => {
   baseQuery += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order} LIMIT $${
     queryParams.length - 1
   } OFFSET $${queryParams.length}`;
-
+  console.log(baseQuery);
   promsArray.push(checkValidColumns("articles", sortBy));
   promsArray.push(db.query(baseQuery, queryParams));
 
@@ -60,11 +55,10 @@ exports.selectAllArticles = (sortBy, order, topic, limit, page) => {
 
       return db.query(totalQuery, topic ? [topic] : []).then((countResult) => {
         const total_count = parseInt(countResult.rows[0].total_count, 10);
-        if (!promResultTwo) {
-          return { articles: promResultThree.rows, total_count };
-        } else {
-          return { articles: promResultTwo.rows, total_count };
-        }
+        return {
+          articles: promResultTwo ? promResultTwo.rows : promResultThree.rows,
+          total_count,
+        };
       });
     }
   );
