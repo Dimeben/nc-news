@@ -42,7 +42,7 @@ exports.selectAllArticles = (sortBy, order, topic, limit, page) => {
   baseQuery += ` GROUP BY articles.article_id ORDER BY ${sortBy} ${order} LIMIT $${
     queryParams.length - 1
   } OFFSET $${queryParams.length}`;
-  console.log(baseQuery);
+
   promsArray.push(checkValidColumns("articles", sortBy));
   promsArray.push(db.query(baseQuery, queryParams));
 
