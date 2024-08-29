@@ -1,5 +1,9 @@
 # Northcoders News API
 
+#### To access the endpoints on your browser, append them to the following base URL:
+
+> https://nc-news-bpw3.onrender.com
+
 ## Skills
 
 - **JavaScript**
@@ -86,10 +90,6 @@
 #### Initialise the server on port 8080 by running:
 
 > npm run start <br>
-
-#### To access the endpoints on your browser, append them to the following base URL:
-
-> https://nc-news-bpw3.onrender.com
 
 ## Endpoints
 
