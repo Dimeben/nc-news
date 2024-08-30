@@ -31,18 +31,9 @@ jobs:
           postgresql password: 'test_password'
       - name: Install dependencies
         run: npm ci
-      - name: Run api tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test api.test.js
-      - name: Run articles tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test articles.test.js
-      - name: Run comments tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test comments.test.js
-      - name: Run topics tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test topics.test.js
-      - name: Run users tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test users.test.js
-      - name: Run utils tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test utils.test.js
+      - name: Run all tests
+        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test
+
   deploy:
     runs-on: ubuntu-latest
     needs: test
