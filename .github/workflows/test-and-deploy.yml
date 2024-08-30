@@ -12,7 +12,7 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: my_db
+          POSTGRES_DB: nc_news_test
           POSTGRES_USER: test_user
           POSTGRES_PASSWORD: test_password
         ports:
@@ -39,7 +39,7 @@ jobs:
           done
 
       - name: Delay before setup
-        run: sleep 10
+        run: sleep 3
 
       - name: Check PostgreSQL is Running
         run: sudo netstat -plnt | grep 5432
@@ -51,10 +51,10 @@ jobs:
           PGPORT: 5432
           PGUSER: test_user
           PGPASSWORD: test_password
-          PGDATABASE: my_db
+          PGDATABASE: nc_news_test
 
       - name: Delay before seed
-        run: sleep 10
+        run: sleep 3
 
       - name: Seed database
         run: npm run seed
@@ -63,10 +63,10 @@ jobs:
           PGPORT: 5432
           PGUSER: test_user
           PGPASSWORD: test_password
-          PGDATABASE: my_db
+          PGDATABASE: nc_news_test
 
       - name: Delay before test
-        run: sleep 20
+        run: sleep 5
 
       - name: Run tests
         run: npm test
@@ -75,7 +75,7 @@ jobs:
           PGPORT: 5432
           PGUSER: test_user
           PGPASSWORD: test_password
-          PGDATABASE: my_db
+          PGDATABASE: nc_news_test
 
   deploy:
     runs-on: ubuntu-latest
