@@ -20,6 +20,8 @@
 - **Model View Controller**
 - **Hosting**
 - **Pagination**
+- **Continuous Integration**
+- **Continuous Delivery**
 
 ## Setup
 
