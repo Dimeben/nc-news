@@ -1,0 +1,44 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches:
+      - main  
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:  
+      - name: setuptest
+        run: echo "Running tests"
+
+  test:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Use node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Use PostgreSQL
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql_db: 'my_db'
+          postgresql_user: 'test_user'
+          postgresql_password: 'test_password' 
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm t
+
+deploy:
+  runs-on: ubuntu-latest
+  needs: test
+  steps:
+    - name: Deploy to Render
+      run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
