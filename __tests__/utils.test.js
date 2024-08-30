@@ -3,6 +3,47 @@ const {
   createRef,
   formatComments,
 } = require("../db/seeds/utils");
+const db = require("../db/connection");
+const { checkExists, checkValidColumns } = require("../utils/utils");
+
+afterAll(() => {
+  return db.end();
+});
+
+describe("checkExists", () => {
+  test("checkExists will return a resolved promise if the given PSQL query exists", async () => {
+    await expect(
+      checkExists("articles", "topic", "mitch")
+    ).resolves.not.toThrow();
+    await expect(checkExists("topics", "slug", "cats")).resolves.not.toThrow();
+    await expect(checkExists("comments", "votes", "16")).resolves.not.toThrow();
+  });
+
+  test("checkExists will return a rejected promise when a given PSQL query does not exist", async () => {
+    await expect(
+      checkExists("banana", "banana", "terracotta")
+    ).rejects.toThrow();
+  });
+});
+
+describe("checkValidColumns", () => {
+  test("checkValidColumns will return a resolved promise if the given PSQL column exists", async () => {
+    await expect(
+      checkValidColumns("articles", "topic")
+    ).resolves.toBeUndefined();
+    await expect(checkValidColumns("topics", "slug")).resolves.toBeUndefined();
+    await expect(
+      checkValidColumns("comments", "votes")
+    ).resolves.toBeUndefined();
+  });
+
+  test("checkValidColumns will return a rejected promise when a given PSQL column does not exist", async () => {
+    await expect(checkValidColumns("articles", "banana")).rejects.toEqual({
+      status: 400,
+      msg: "Bad request",
+    });
+  });
+});
 
 describe("convertTimestampToDate", () => {
   test("returns a new object", () => {
