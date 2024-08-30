@@ -42,13 +42,28 @@ jobs:
         run: npm ci
 
       - name: Setup database
-        run: npm run setup-dbs
+        run: psql -f ./db/setup.sql
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: test_user
+          PGPASSWORD: test_password
 
-      - name: seed
-        run: npm run seed
+      - name: Seed database
+        run: node ./db/seeds/run-seed.js
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: test_user
+          PGPASSWORD: test_password
 
       - name: Run tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm t
+        run: npm test
+        env:
+          PGHOST: localhost
+          PGPORT: 5432
+          PGUSER: test_user
+          PGPASSWORD: test_password
 
   deploy:
     runs-on: ubuntu-latest
