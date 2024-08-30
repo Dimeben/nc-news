@@ -19,22 +19,15 @@ jobs:
       - name: Use PostgreSQL
         uses: harmon758/postgresql-action@v1
         with:
-          postgresql db: 'my_db'
+          postgresql db: 'nc_news_test'
           postgresql user: 'test_user'
           postgresql password: 'test_password'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Setup DB
-        run: npm run setup-dbs
-
-      - name: Seed
-        run: npm run seed
-
-
       - name: Run tests
-        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test
+        run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm test
 
   deploy:
     runs-on: ubuntu-latest
