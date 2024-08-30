@@ -15,9 +15,7 @@ jobs:
           POSTGRES_DB: "nc_news_test"
           POSTGRES_USER: "test_user"
           POSTGRES_PASSWORD: "test_password"
-        ports:
-          - 5432:5432
-
+ 
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
