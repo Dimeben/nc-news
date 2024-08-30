@@ -45,7 +45,7 @@ jobs:
         run: sudo netstat -plnt | grep 5432
 
       - name: Setup database
-        run: psql -f ./db/setup.sql
+        run: npm run setup-dbs
         env:
           PGHOST: localhost
           PGPORT: 5432
@@ -57,7 +57,7 @@ jobs:
         run: sleep 10
 
       - name: Seed database
-        run: node ./db/seeds/run-seed.js
+        run: npm run seed
         env:
           PGHOST: localhost
           PGPORT: 5432
