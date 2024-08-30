@@ -1,4 +1,4 @@
-name: Test and Deploy
+name: Test & Deploy
 
 on:
   push:
@@ -7,47 +7,27 @@ on:
 
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_DB: "my_db"
-          POSTGRES_USER: "test_user"
-          POSTGRES_PASSWORD: "test_password"
-        ports:
-          - 5432:5432
-        options: --health-cmd "pg_isready -U test_user" --health-interval 10s --health-timeout 10s --health-retries 5
- 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Use node.js
-        uses: actions/setup-node@v4
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+
+      - name: Use PostgreSQL
+        uses: harmon758/postgresql-action@v1
         with:
-          node-version: 18
+          postgresql db: 'my_db'
+          postgresql user: 'test_user'
+          postgresql password: 'test_password'
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Delay before setup
-        run: sleep 3
-
-      - name: Setup database
-        run: npm run setup-dbs
-
-      - name: Delay before seed
-        run: sleep 3
-
-      - name: Seed database
-        run: npm run seed
-
-      - name: Delay before test
-        run: sleep 5
-
       - name: Run tests
-        run: npm test
+        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm test
 
   deploy:
     runs-on: ubuntu-latest
