@@ -31,6 +31,13 @@ jobs:
           postgresql_user: 'test_user'
           postgresql_password: 'test_password' 
 
+      - name: Wait for PostgreSQL
+        run: |
+          echo "Waiting for PostgreSQL to start..."
+          while ! pg_isready -h localhost -p 5432 -U test_user; do
+            sleep 1
+          done
+
       - name: Install dependencies
         run: npm ci
 
