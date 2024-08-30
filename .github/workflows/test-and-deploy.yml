@@ -26,9 +26,10 @@ jobs:
       - name: Use PostgreSQL
         uses: harmon758/postgresql-action@v1
         with:
-          postgresql_db: 'my_db'
-          postgresql_user: 'test_user'
-          postgresql_password: 'test_password' 
+          postgresql version: '13'
+          postgresql db: 'my_db'
+          postgresql user: 'test_user'
+          postgresql password: 'test_password' 
 
       - name: Install dependencies
         run: npm ci
