@@ -3,18 +3,23 @@ name: Test and Deploy
 on:
   push:
     branches:
-      - main  
+      - main
 
 jobs:
-  greet:
-    runs-on: ubuntu-latest
-    steps:  
-      - name: setuptest
-        run: echo "Running tests"
-
   test:
     runs-on: ubuntu-latest
-    steps: 
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_DB: my_db
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: --health-cmd "pg_isready -U test_user" --health-interval 10s
+
+    steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
@@ -23,13 +28,8 @@ jobs:
         with:
           node-version: 18
 
-      - name: Use PostgreSQL
-        uses: harmon758/postgresql-action@v1
-        with:
-          postgresql version: '13'
-          postgresql db: 'my_db'
-          postgresql user: 'test_user'
-          postgresql password: 'test_password' 
+      - name: Install dependencies
+        run: npm ci
 
       - name: Wait for PostgreSQL
         run: |
@@ -38,9 +38,6 @@ jobs:
             sleep 1
           done
 
-      - name: Install dependencies
-        run: npm ci
-
       - name: Setup database
         run: psql -f ./db/setup.sql
         env:
@@ -48,6 +45,7 @@ jobs:
           PGPORT: 5432
           PGUSER: test_user
           PGPASSWORD: test_password
+          PGDATABASE: my_db
 
       - name: Seed database
         run: node ./db/seeds/run-seed.js
@@ -56,6 +54,7 @@ jobs:
           PGPORT: 5432
           PGUSER: test_user
           PGPASSWORD: test_password
+          PGDATABASE: my_db
 
       - name: Run tests
         run: npm test
@@ -64,6 +63,7 @@ jobs:
           PGPORT: 5432
           PGUSER: test_user
           PGPASSWORD: test_password
+          PGDATABASE: my_db
 
   deploy:
     runs-on: ubuntu-latest
