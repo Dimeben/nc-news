@@ -3,80 +3,37 @@ name: Test and Deploy
 on:
   push:
     branches:
-      - main
+      - main 
 
 jobs:
+  greet:
+    runs-on: ubuntu-latest
+    steps:  
+      - name: setuptest
+        run: echo "Running tests"
+
   test:
     runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_DB: my_db
-          POSTGRES_USER: test_user
-          POSTGRES_PASSWORD: test_password
-        ports:
-          - 5432:5432
-        options: --health-cmd "pg_isready -U test_user" --health-interval 10s
-
-    steps:
+    steps:  
       - name: Checkout Repo
         uses: actions/checkout@v4
-
       - name: Use node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
-
+      - name: Use PostgreSQL
+        uses: harmon758/postgresql-action@v1
+        with:
+          postgresql db: 'my_db'
+          postgresql user: 'test_user'
+          postgresql password: 'test_password'
       - name: Install dependencies
         run: npm ci
-
-      - name: Wait for PostgreSQL
-        run: |
-          echo "Waiting for PostgreSQL to start..."
-          while ! pg_isready -h localhost -p 5432 -U test_user; do
-            sleep 1
-          done
-
-      - name: Delay before setup
-        run: sleep 10
-
-      - name: Setup database
-        run: psql -f ./db/setup.sql
-        env:
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: test_user
-          PGPASSWORD: test_password
-          PGDATABASE: my_db
-
-      - name: Delay before seed
-        run: sleep 10
-
-      - name: Seed database
-        run: node ./db/seeds/run-seed.js
-        env:
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: test_user
-          PGPASSWORD: test_password
-          PGDATABASE: my_db
-
-      - name: Delay before test
-        run: sleep 20
-
       - name: Run tests
-        run: npm test
-        env:
-          PGHOST: localhost
-          PGPORT: 5432
-          PGUSER: test_user
-          PGPASSWORD: test_password
-          PGDATABASE: my_db
+        run: PGDATABASE=my_db PGUSER=test_user PGPASSWORD=test_password npm t
 
   deploy:
     runs-on: ubuntu-latest
-    needs: test
     steps:
       - name: Deploy to Render
         run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
