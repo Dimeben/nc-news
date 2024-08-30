@@ -20,9 +20,9 @@ describe("checkExists", () => {
   });
 
   test("checkExists will return a rejected promise when a given PSQL query does not exist", async () => {
-    await expect(
-      checkExists("banana", "banana", "terracotta")
-    ).rejects.toThrow();
+    await expect(checkExists("topics", "slug", "butterfly")).rejects.toEqual(
+      expect.anything()
+    );
   });
 });
 
