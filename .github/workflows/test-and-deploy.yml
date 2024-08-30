@@ -12,7 +12,7 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_DB: "nc_news_test"
+          POSTGRES_DB: "my_db"
           POSTGRES_USER: "test_user"
           POSTGRES_PASSWORD: "test_password"
         ports:
