@@ -53,9 +53,6 @@ jobs:
           PGPASSWORD: test_password
           PGDATABASE: my_db
 
-      - name: View PostgreSQL Logs
-        run: docker logs <container_id>
-
       - name: Delay before seed
         run: sleep 10
 
@@ -67,9 +64,6 @@ jobs:
           PGUSER: test_user
           PGPASSWORD: test_password
           PGDATABASE: my_db
-
-      - name: View PostgreSQL Logs
-        run: docker logs <container_id>
 
       - name: Delay before test
         run: sleep 20
