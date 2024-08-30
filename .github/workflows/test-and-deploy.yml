@@ -38,6 +38,9 @@ jobs:
             sleep 1
           done
 
+      - name: Delay before setup
+        run: sleep 10
+
       - name: Setup database
         run: psql -f ./db/setup.sql
         env:
@@ -47,6 +50,9 @@ jobs:
           PGPASSWORD: test_password
           PGDATABASE: my_db
 
+      - name: Delay before seed
+        run: sleep 10
+
       - name: Seed database
         run: node ./db/seeds/run-seed.js
         env:
@@ -55,6 +61,9 @@ jobs:
           PGUSER: test_user
           PGPASSWORD: test_password
           PGDATABASE: my_db
+
+      - name: Delay before test
+        run: sleep 20
 
       - name: Run tests
         run: npm test
