@@ -9,6 +9,9 @@ const {
   invalidIdErrorHandler,
   invalidDataErrorHandler,
 } = require("./error-handlers");
+const cors = require("cors");
+
+app.use(cors());
 
 app.use(express.json());
 
