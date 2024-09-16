@@ -19,7 +19,7 @@ exports.selectArticle = (articleId) => {
   });
 };
 
-exports.selectAllArticles = (sortBy, order, topic, limit, page) => {
+exports.selectAllArticles = (sortBy, order, limit, page, topic) => {
   const promsArray = [];
 
   let baseQuery = `

@@ -25,7 +25,7 @@ exports.getAllArticles = (req, res, next) => {
   let limit = req.query.limit ? parseInt(req.query.limit, 10) : 10;
   let page = req.query.p ? parseInt(req.query.p, 10) : 1;
 
-  selectAllArticles(sortBy, order, topic, limit, page)
+  selectAllArticles(sortBy, order, limit, page, topic)
     .then(({ articles, total_count }) => {
       res.status(200).send({ articles, total_count });
     })
