@@ -21,6 +21,7 @@ exports.selectArticle = (articleId) => {
 
 exports.selectAllArticles = (sortBy, order, limit, page, topic) => {
   const promsArray = [];
+  console.log(sortBy, order, limit, page, topic, "model");
 
   let baseQuery = `
     SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, 
@@ -43,6 +44,7 @@ exports.selectAllArticles = (sortBy, order, limit, page, topic) => {
     queryParams.length - 1
   } OFFSET $${queryParams.length}`;
 
+  console.log(baseQuery, "model");
   promsArray.push(checkValidColumns("articles", sortBy));
   promsArray.push(db.query(baseQuery, queryParams));
 

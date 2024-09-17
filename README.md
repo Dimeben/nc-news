@@ -58,24 +58,9 @@
 
 [Install npm and Node.js](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
 
-> Made using Node.js v22.4.1
-
-#### Install PostgreSQL by following this link:
-
-[Install PostgreSQL](https://www.postgresql.org/download/)
-
-> Made using PostgreSQL 14.13
-
 #### Install the dependencies by running the following in your terminal:
 
-> npm install <br>
-> npm install jest <br>
-> npm install supertest <br>
-> npm install express <br>
-> npm install jest-sorted <br>
-> npm install pg-format <br>
-> npm install dotenv --save <br>
-> npm install nodemon <br>
+> npm i
 
 #### Initialise the databases by running:
 

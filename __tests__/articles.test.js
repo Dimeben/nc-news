@@ -177,6 +177,18 @@ describe("/api/articles", () => {
       });
   });
 
+  test("200 - GET - will return an array of articles when all query params are used", () => {
+    return request(app)
+      .get(
+        "/api/articles?sort_by=created_at&order=DESC&limit=10&page=1&topic=mitch"
+      )
+      .expect(200)
+      .then((res) => {
+        const { articles } = res.body;
+        console.log(articles);
+        expect(Array.isArray(articles)).toBe(true);
+      });
+  });
   test("400 - GET - sends an appropriate status and error message when an invalid order is passed", () => {
     return request(app)
       .get("/api/articles?sort_by=author&order=how-should-i-know")
